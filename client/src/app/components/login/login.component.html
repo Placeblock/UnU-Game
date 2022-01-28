@@ -1,0 +1,28 @@
+<div id="logo-container">
+    <div id="cards-container">
+        <div class="card-container" [ngStyle]="{'rotate':this.getRotation(1)+'deg'}">
+            <app-unocard [unocard]="unocard1"></app-unocard>
+        </div>
+        <div class="card-container" [ngStyle]="{'rotate':this.getRotation(2)+'deg'}">
+            <app-unocard [unocard]="unocard2"></app-unocard>
+        </div>
+        <div class="card-container" [ngStyle]="{'rotate':this.getRotation(3)+'deg'}">
+            <app-unocard [unocard]="unocard3"></app-unocard>
+        </div>
+    </div>
+    <div id="header">
+        UNU!
+    </div>
+</div>
+<div id="form-container">
+    <input id="name" placeholder="Name" type="text" [formControl]="name">
+    <button (click)="login()">
+        <span>Play</span>
+    </button>
+    <button (click)="continue()">
+        <span>Zufällig</span>
+    </button>
+</div>
+<div id="credits">
+    <p>Created with <fa-icon [icon]="faHeart"></fa-icon> by Placeblock</p>
+</div>

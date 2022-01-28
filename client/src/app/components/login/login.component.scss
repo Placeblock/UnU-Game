@@ -1,0 +1,62 @@
+#logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#header {
+    color: white;
+    font-size: 100px;
+    transform: translateY(-80px);
+    text-shadow: 0px 0px 20px black, 0px 0px 20px black, 0px 0px 20px black;
+}
+
+#cards-container {
+    position: relative;
+}
+.card-container:nth-child(1) {
+    position: relative;
+}
+.card-container {
+    position: absolute;
+    top: 0px;
+    transform-origin: bottom center;
+}
+#form-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+#form-container input {
+    border-radius: 10px;
+    border: none;
+    height: 50px;
+    width: 300px;
+    font-size: 20px;
+    padding-left: 20px;
+    box-shadow: 0px 0px 10px black;
+}
+#form-container button {
+    background-color: #4538ff;
+    font-size: 25px;
+    color: white;
+    border: none;
+    padding: 0px 15px 0px 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px black;
+    transition: scale 0.1s ease-in-out;
+}
+#form-container button:hover {
+    cursor: pointer;
+    scale: 1.1;
+}
+#credits {
+    position: fixed;
+    right: 5px;
+    bottom: 5px;
+    color: white;
+}
+#credits fa-icon {
+    color: red;
+}

@@ -1,0 +1,23 @@
+
+<div class="front">
+    <ng-container *ngIf="(this.unocard | typeof : SpecialUnoCard)">
+        <ng-container *ngIf="(this.unocard | cast : SpecialUnoCard).type === 'add4'">
+            <div class="top">+4</div>
+            <div class="center">+4</div>
+            <div class="bottom">+4</div>
+        </ng-container>
+        <ng-container *ngIf="(this.unocard | cast : SpecialUnoCard).type === 'add2'">
+            <div class="top">+2</div>
+            <div class="center">+2</div>
+            <div class="bottom">+2</div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="(this.unocard | typeof : NumberUnoCard)">
+        <div class="top">{{(this.unocard | cast : NumberUnoCard).number}}</div>
+        <div class="center">{{(this.unocard | cast : NumberUnoCard).number}}</div>
+        <div class="bottom">{{(this.unocard | cast : NumberUnoCard).number}}</div>
+    </ng-container>
+</div>
+<div class="back">
+    <p>UNU</p>
+</div>

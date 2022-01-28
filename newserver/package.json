@@ -1,0 +1,24 @@
+{
+  "name": "newserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "ts-node index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "random-words": "^1.1.2",
+    "ts-node": "^10.4.0",
+    "uuidv4": "^6.2.12",
+    "ws": "^8.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.12",
+    "@types/ws": "^8.2.2",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.5.5"
+  }
+}

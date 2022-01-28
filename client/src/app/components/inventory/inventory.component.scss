@@ -1,0 +1,45 @@
+:host {
+    position: fixed;
+    bottom: 0px;
+    height: 200px;
+    width: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+.controls {
+    position: fixed;
+    bottom: 20px;
+    min-width: 200px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgb(32, 32, 32);
+    color: white;
+    border-radius: 100px;
+    padding: 4px;
+    box-shadow: 0px 0px 20px black;
+}
+.controls fa-icon {
+    cursor: pointer;
+    border-radius: 100px;
+    height: 50px;
+    width: 50px;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(17, 17, 17);
+}
+:host .card-container {
+    position: absolute;
+    transform-origin: bottom center;
+    transition: transform .5s ease-in-out, left .5s ease-in-out, top .5s ease-in-out;
+}
+:host .card-container app-unocard {
+    transition: transform 0.1s ease-in-out;
+}
+:host .interactable:hover app-unocard {
+    transform: translateY(-50px) !important;
+    cursor: pointer;
+}
