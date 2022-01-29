@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { catchError, map, tap } from 'rxjs/operators';
+import { webSocket } from 'rxjs/webSocket';
 import { WebsocketService } from './services/websocket.service';
 
 @Component({
@@ -9,4 +10,7 @@ import { WebsocketService } from './services/websocket.service';
 })
 export class AppComponent {
   title = 'client';
+
+  constructor() {
+  }
 }

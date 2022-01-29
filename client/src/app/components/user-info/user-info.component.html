@@ -1,9 +1,9 @@
-<p>{{gameService.getPlayerById(this.playerid).name}}</p>
+<p>{{gameService.getPlayerById(this.playerid).getName()}}</p>
 <div class="cards">
     <div class="card-container" [ngStyle]="
     {rotate: getRotation(index) + 'deg',
-    'scale':gameService.getCurrentPlayer()?.id === this.playerid ? '0.8' : '0.6',
-    'transform':gameService.getPlayerById(this.playerid).hoveredindex == index ? 'translateY(-30px)' : ''}"
+    'scale':gameService.getCurrentPlayer()?.getUUID() === this.playerid ? '0.8' : '0.6',
+    'transform':gameService.getPlayerById(this.playerid).getHoveredIndex() == index ? 'translateY(-30px)' : ''}"
     *ngFor="let index of gameService.getPlayerById(this.playerid).getCards().length | times">
         <app-unocard [side]="'back'"></app-unocard>
     </div>

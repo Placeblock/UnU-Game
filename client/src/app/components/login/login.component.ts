@@ -34,7 +34,10 @@ export class LoginComponent {
   }
 
   login() {
-    this.websocketService.sendMessage("changeName", this.name.value);
+    this.websocketService.sendMessage("setName", {"name": this.name.value});
+    if(this.gameService.player != undefined) {
+      this.gameService.player.setName(this.name.value);
+    }
     this.continue();
   }
 
@@ -43,7 +46,7 @@ export class LoginComponent {
       this.websocketService.sendMessage('joinRoom', this.authService.gameid);
       return;
     }else {
-      this.router.navigate(["create"]);
+      this.websocketService.sendMessage('createRoom', {});
     }
   }
 }

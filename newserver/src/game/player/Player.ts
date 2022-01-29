@@ -1,10 +1,10 @@
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { InChangeNamePacket } from '../network/packets/in/InChangeNamePacket';
 import { InDrawCardPacket } from '../network/packets/in/InDrawCardPacket';
 import { InPlayCardPacket } from '../network/packets/in/InPlayCardPacket';
 import { InStartRoundPacket } from '../network/packets/in/InStartRound';
 import { InWishColorPacket } from '../network/packets/in/InWishColorPacket';
-import { OutInvalidMessagePacket } from '../network/packets/out/OutInvalidMessage';
+import { OutInvalidMessagePacket } from '../network/packets/out/OutInvalidMessagePacket';
 import { OutPacket } from '../network/packets/out/OutPacket';
 import { OutPlayerChangedNamePacket } from '../network/packets/out/room/OutPlayerChangedNamePacket';
 import { OutPlayerLeftRoomPacket } from '../network/packets/out/room/OutPlayerLeftRoomPacket';
@@ -15,9 +15,9 @@ import { InJoinRoomPacket } from '../network/packets/in/InJoinRoomPacket';
 import { RoomManager } from '../RoomManager';
 
 export abstract class Player {
-    private readonly uuid: string = uuid();
-    private name: string = uniqueNamesGenerator({"dictionaries":[adjectives, colors, animals],"separator":' '});;
-    private currentroom: Room;
+    protected readonly uuid: string = v4();
+    protected name: string = uniqueNamesGenerator({"dictionaries":[adjectives, colors, animals],"separator":' '});;
+    protected currentroom: Room;
 
     constructor() {}
 
@@ -112,13 +112,15 @@ export abstract class Player {
                 this.currentroom.receiveStartRound(inStartRoundPacket);
                 break;
             default:
-                this.send(new OutInvalidMessagePacket("Invalid Message"));
+                this.send(new OutInvalidMessagePacket("Invalid Message", {"action":action,"data":data}));
                 break;
         }
     }
 
     protected clearUpPlayer() {
-        this.currentroom.removePlayer(this);
+        if(this.currentroom != undefined) {
+            this.currentroom.removePlayer(this);
+        }
     }
     public abstract close();
     

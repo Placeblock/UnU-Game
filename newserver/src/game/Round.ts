@@ -4,7 +4,6 @@ import { UnoCard } from "./card/UnoCard";
 import { CardStack } from "./CardStack";
 import { Inventory } from "./Inventory";
 import { InDrawCardPacket } from "./network/packets/in/InDrawCardPacket";
-import { InPacket } from "./network/packets/in/InPacket";
 import { InPlayCardPacket } from "./network/packets/in/InPlayCardPacket";
 import { InWishColorPacket } from "./network/packets/in/InWishColorPacket";
 import { OutCurrentPlayerPacket } from "./network/packets/out/round/OutCurrentPlayerPacket";

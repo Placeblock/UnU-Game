@@ -2,15 +2,27 @@ import { NumberUnoCard } from "./number-uno-card";
 import { UnoCard } from "./uno-card";
 
 export class Player {
-    id: string;
-    name: string;
-    cards: UnoCard[] = [];
-    hoveredindex: number = 3;
+    private id: string;
+    private name: string;
+    private cards: UnoCard[] = [];
+    private hoveredindex: number = 3;
 
     constructor(id: string, name: string) {
         this.id = id;
         this.name = name;
     }
+
+    getUUID(): string {
+        return this.id;
+    }
+
+    getName(): string {
+        return this.name;
+    }
+
+    setName(name: string) {
+        this.name = name;
+    } 
 
     addCard(card: UnoCard) {
         this.cards.push(card);
@@ -26,5 +38,9 @@ export class Player {
 
     getCards(): UnoCard[] {
         return this.cards;
+    }
+
+    getHoveredIndex(): number {
+        return this.hoveredindex;
     }
 }

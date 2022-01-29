@@ -17,6 +17,7 @@ export class Room {
 
     constructor(owner: Player) {
         this.owner = owner;
+        console.log("new room");
         this.addPlayer(this.owner);
     }
 
@@ -34,7 +35,7 @@ export class Room {
             return;
         }
         this.players.push(player);
-        this.sendToAllPlayers(new OutPlayerJoinedRoomPacket(player), [player]);
+        this.sendToAllPlayers(new OutPlayerJoinedRoomPacket(player), []);
     }
 
     public removePlayer(player: Player) {

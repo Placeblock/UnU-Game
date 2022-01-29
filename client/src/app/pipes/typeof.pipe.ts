@@ -6,8 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class TypeofPipe implements PipeTransform {
 
   transform(value: any, clss: any): boolean {
-    console.log(value);
-    console.log(clss);
     return value instanceof clss;
   }
 

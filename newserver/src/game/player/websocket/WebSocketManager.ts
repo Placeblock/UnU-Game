@@ -12,16 +12,18 @@ export class WebSocketManager {
 
     constructor(unuServer: UnUServer) {
         this.unuServer = unuServer;
+        var privateKey = readFileSync( '/etc/letsencrypt/live/placeblock.undo.it/privkey.pem' );
+        var certificate = readFileSync( '/etc/letsencrypt/live/placeblock.undo.it/cert.pem' );
         this.httpserver = createServer({
-            cert: readFileSync('/etc/letsencrypt/live/placeblock.undo.it/privkey.pem'),
-            key: readFileSync('/etc/letsencrypt/live/placeblock.undo.it/cert.pem')
+            cert: certificate,
+            key: privateKey
         });
         this.wss = new WebSocketServer({"server":this.httpserver});
 
         this.wss.on("connection", (ws: WebSocket) => {
             var player = new WebSocketPlayer(ws);
-            ws["player"] = player;
         });
+        this.httpserver.listen(8009);
     }
     
 }

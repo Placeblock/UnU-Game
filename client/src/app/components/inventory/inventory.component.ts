@@ -33,8 +33,6 @@ export class InventoryComponent {
     if(cardstack == null) return
     const newx = cardstack.getBoundingClientRect().left;
     const newy = cardstack.getBoundingClientRect().top;
-    console.log(newx);
-    console.log(element.getBoundingClientRect().left);
     element.style.cssText = "transform: !important";
     setTimeout(() => {
       element.style.cssText = "transform: translateX("+(newx - element.getBoundingClientRect().left)+"px) translateY("+(newy - element.getBoundingClientRect().top)+"px) !important";

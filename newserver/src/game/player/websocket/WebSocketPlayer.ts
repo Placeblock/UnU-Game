@@ -1,17 +1,21 @@
 import { WebSocket } from "ws";
 import { OutPacket } from "../../network/packets/out/OutPacket";
-import { OutInvalidMessagePacket } from "../../network/packets/out/OutInvalidMessage";
+import { OutInvalidMessagePacket } from "../../network/packets/out/OutInvalidMessagePacket";
 import { Player } from "../Player";
+import { OutPlayerDataPacket } from "../../network/packets/out/OutPlayerDataPacket";
 
 export class WebSocketPlayer extends Player {
-    private readonly ws: WebSocket;
+    private ws: WebSocket;
     private isAlive: boolean = true;
+    private pingtimer: NodeJS.Timer;
 
     constructor(ws: WebSocket) {
         super();
         this.ws = ws;
 
-        setInterval(() => {
+        this.send(new OutPlayerDataPacket(this));
+
+        this.pingtimer = setInterval(() => {
             if (this.isAlive === false) {
                 close();
                 return;
@@ -23,7 +27,7 @@ export class WebSocketPlayer extends Player {
         ws.on("message", data => {
             var json = JSON.parse(data.toString());
             if (!("action" in json) || !("data" in json)) {
-                this.send(new OutInvalidMessagePacket("Provide Action and Data!"));
+                this.send(new OutInvalidMessagePacket("Provide Action and Data!", json));
                 return;
             }
             this.receive(json["action"],json["data"]);
@@ -37,11 +41,16 @@ export class WebSocketPlayer extends Player {
     }
 
     public send(packet: OutPacket) {
-        this.ws.send(packet.asJSON());
+        this.ws.send(JSON.stringify(packet.asJSON()));
     }
 
     public close() {
-        throw new Error("Method not implemented.");
+        console.log("WS Player Disconnected");
+        this.clearUpPlayer();
+        this.ws.removeAllListeners();
+        clearInterval(this.pingtimer);
+        this.pingtimer = undefined;
+        this.ws = undefined;
     }
     
 }
