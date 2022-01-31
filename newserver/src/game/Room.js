@@ -6,11 +6,21 @@ var OutJoinedRoomPacket_1 = require("./network/packets/out/room/OutJoinedRoomPac
 var OutNewOwnerPacket_1 = require("./network/packets/out/room/OutNewOwnerPacket");
 var OutPlayerJoinedRoomPacket_1 = require("./network/packets/out/room/OutPlayerJoinedRoomPacket");
 var OutPlayerLeftRoomPacket_1 = require("./network/packets/out/room/OutPlayerLeftRoomPacket");
+var OutRoundSettingsPacket_1 = require("./network/packets/out/round/OutRoundSettingsPacket");
 var RoomManager_1 = require("./RoomManager");
 var Round_1 = require("./Round");
 var Room = /** @class */ (function () {
     function Room(owner) {
         this.players = [];
+        this.roundsettings = {
+            "startcardamount": 7,
+            "allowwishonwish": true,
+            "allowwishondraw4": true,
+            "allowdraw4onwish": true,
+            "allowdraw4ondraw4": true,
+            "allowdraw4ondraw2": true,
+            "allowdraw2ondraw4": false
+        };
         this.owner = owner;
         this.name = (0, random_word_slugs_1.generateSlug)();
         this.addPlayer(this.owner);
@@ -51,9 +61,16 @@ var Room = /** @class */ (function () {
     Room.prototype.getCurrentRound = function () {
         return this.currentround;
     };
-    Room.prototype.startNewRound = function (settings) {
-        var round = new Round_1.Round(this.players, settings, this);
+    Room.prototype.startNewRound = function () {
+        var round = new Round_1.Round(this.players, this.roundsettings, this);
         return round;
+    };
+    Room.prototype.setRoundSettings = function (roundSettings) {
+        this.roundsettings = roundSettings;
+        this.sendToAllPlayers(new OutRoundSettingsPacket_1.OutRoundSettingsPacket(roundSettings), []);
+    };
+    Room.prototype.getRoundSettings = function () {
+        return this.roundsettings;
     };
     Room.prototype.sendToAllPlayers = function (packet, filterplayers) {
         for (var _i = 0, _a = this.players; _i < _a.length; _i++) {

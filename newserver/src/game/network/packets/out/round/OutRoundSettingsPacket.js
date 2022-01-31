@@ -15,21 +15,22 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.InDrawCardPacket = void 0;
-var InPacket_1 = require("./InPacket");
-var InDrawCardPacket = /** @class */ (function (_super) {
-    __extends(InDrawCardPacket, _super);
-    function InDrawCardPacket(player) {
+exports.OutRoundSettingsPacket = void 0;
+var OutPacket_1 = require("../OutPacket");
+var OutRoundSettingsPacket = /** @class */ (function (_super) {
+    __extends(OutRoundSettingsPacket, _super);
+    function OutRoundSettingsPacket(settings) {
         var _this = _super.call(this) || this;
-        _this.player = player;
+        _this.action = "roundSettings";
+        _this.settings = settings;
         return _this;
     }
-    InDrawCardPacket.prototype.getPlayer = function () {
-        return this.player;
+    OutRoundSettingsPacket.prototype.asJSON = function () {
+        return { "action": this.action, "settings": this.settings };
     };
-    InDrawCardPacket.getFromJSON = function (player, json) {
-        return new InDrawCardPacket(player);
+    OutRoundSettingsPacket.prototype.getSettings = function () {
+        return this.settings;
     };
-    return InDrawCardPacket;
-}(InPacket_1.InPacket));
-exports.InDrawCardPacket = InDrawCardPacket;
+    return OutRoundSettingsPacket;
+}(OutPacket_1.OutPacket));
+exports.OutRoundSettingsPacket = OutRoundSettingsPacket;

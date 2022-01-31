@@ -7,9 +7,7 @@ import { Draw4UnUCard } from 'src/app/models/card/special/draw4-un-ucard.model';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { GameService } from 'src/app/services/game.service';
-import { Player } from 'src/app/models/player.model';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -24,7 +22,7 @@ export class LoginComponent {
   unucard2 = new Draw2UnUCard(Color.BLUE);
   unucard3 = new NumberUnUCard(3, Color.RED);
 
-  constructor(public router: Router, public websocketService: WebsocketService, public gameService: GameService, public authService: AuthService) {
+  constructor(public router: Router, public websocketService: WebsocketService, public gameService: GameService) {
 
   }
 
@@ -43,8 +41,8 @@ export class LoginComponent {
   }
 
   continue() {
-    if (this.authService.gameid != "") {
-      this.websocketService.sendMessage('joinRoom', {"uuid":this.authService.gameid});
+    if (this.gameService.getAuthGameName() != "") {
+      this.websocketService.sendMessage('joinRoom', {"uuid":this.gameService.getAuthGameName()});
       return;
     }else {
       this.websocketService.sendMessage('createRoom', {});

@@ -15,27 +15,26 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.InPlayCardPacket = void 0;
-var InPacket_1 = require("./InPacket");
-var InPlayCardPacket = /** @class */ (function (_super) {
-    __extends(InPlayCardPacket, _super);
-    function InPlayCardPacket(player, cardid) {
+exports.OutInvalidJoinRoom = void 0;
+var OutPacket_1 = require("../OutPacket");
+var OutInvalidJoinRoom = /** @class */ (function (_super) {
+    __extends(OutInvalidJoinRoom, _super);
+    function OutInvalidJoinRoom(room, reason) {
         var _this = _super.call(this) || this;
-        _this.cardid = cardid;
-        _this.player = player;
+        _this.action = "invalidJoinRoom";
+        _this.room = room;
+        _this.reason = reason;
         return _this;
     }
-    InPlayCardPacket.prototype.getCardID = function () {
-        return this.cardid;
+    OutInvalidJoinRoom.prototype.asJSON = function () {
+        return { "action": this.action, "room": this.room, "reason": this.reason };
     };
-    InPlayCardPacket.prototype.getPlayer = function () {
-        return this.player;
+    OutInvalidJoinRoom.prototype.getRoom = function () {
+        return this.room;
     };
-    InPlayCardPacket.getFromJSON = function (player, json) {
-        if (!("cardid" in json))
-            return null;
-        return new InPlayCardPacket(player, json["cardid"]);
+    OutInvalidJoinRoom.prototype.getReason = function () {
+        return this.reason;
     };
-    return InPlayCardPacket;
-}(InPacket_1.InPacket));
-exports.InPlayCardPacket = InPlayCardPacket;
+    return OutInvalidJoinRoom;
+}(OutPacket_1.OutPacket));
+exports.OutInvalidJoinRoom = OutInvalidJoinRoom;

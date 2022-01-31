@@ -26,6 +26,7 @@ export class WebSocketPlayer extends Player {
 
         ws.on("message", data => {
             var json = JSON.parse(data.toString());
+            console.log(json);
             if (!("action" in json) || !("data" in json)) {
                 this.send(new OutInvalidMessagePacket("Provide Action and Data!", json));
                 return;

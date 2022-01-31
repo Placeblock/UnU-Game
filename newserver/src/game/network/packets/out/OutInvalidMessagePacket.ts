@@ -1,9 +1,9 @@
 import { OutPacket } from "./OutPacket";
 
 export class OutInvalidMessagePacket extends OutPacket {
-    action: string = "messageInvalid";
-    reason: string;
-    oldmessage: {};
+    readonly action: string = "messageInvalid";
+    private readonly reason: string;
+    private readonly oldmessage: {};
 
     constructor(reason: string, oldmessage: {}) {
         super();

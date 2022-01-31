@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 exports.__esModule = true;
 exports.InJoinRoomPacket = void 0;
-var InPacket_1 = require("./InPacket");
+var InPacket_1 = require("../InPacket");
 var InJoinRoomPacket = /** @class */ (function (_super) {
     __extends(InJoinRoomPacket, _super);
     function InJoinRoomPacket(player, name) {

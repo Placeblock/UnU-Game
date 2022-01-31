@@ -15,22 +15,21 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutPlayerLeftRoomPacket = void 0;
-var OutPacket_1 = require("../OutPacket");
-var OutPlayerLeftRoomPacket = /** @class */ (function (_super) {
-    __extends(OutPlayerLeftRoomPacket, _super);
-    function OutPlayerLeftRoomPacket(player) {
+exports.InDrawCardPacket = void 0;
+var InPacket_1 = require("../InPacket");
+var InDrawCardPacket = /** @class */ (function (_super) {
+    __extends(InDrawCardPacket, _super);
+    function InDrawCardPacket(player) {
         var _this = _super.call(this) || this;
-        _this.action = "playerLeftRoom";
         _this.player = player;
         return _this;
     }
-    OutPlayerLeftRoomPacket.prototype.asJSON = function () {
-        return { "action": this.action, "uuid": this.player.getUUID() };
-    };
-    OutPlayerLeftRoomPacket.prototype.getPlayer = function () {
+    InDrawCardPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    return OutPlayerLeftRoomPacket;
-}(OutPacket_1.OutPacket));
-exports.OutPlayerLeftRoomPacket = OutPlayerLeftRoomPacket;
+    InDrawCardPacket.getFromJSON = function (player, json) {
+        return new InDrawCardPacket(player);
+    };
+    return InDrawCardPacket;
+}(InPacket_1.InPacket));
+exports.InDrawCardPacket = InDrawCardPacket;

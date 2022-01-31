@@ -1,4 +1,6 @@
+import { WebsocketService } from "../services/websocket.service";
 import { Player } from "./player.model";
+import { RoundSettings } from "./round-settings.model";
 import { Round } from "./round.model";
 
 export class Room {
@@ -15,6 +17,7 @@ export class Room {
         this.leaderboard.push(this.owner);
         this.leaderboard.push(this.owner);
         this.leaderboard.push(this.owner);
+
     }
 
     getPlayer(uuid: string) {

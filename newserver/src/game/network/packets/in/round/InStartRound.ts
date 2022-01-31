@@ -1,6 +1,6 @@
-import { Player } from "../../../player/Player";
-import { RoundSettings } from "../../../RoundSettings";
-import { InPacket } from "./InPacket";
+import { Player } from "../../../../player/Player";
+import { RoundSettings } from "../../../../RoundSettings";
+import { InPacket } from "../InPacket";
 
 export class InStartRoundPacket extends InPacket {
     private readonly roundSettings: RoundSettings;

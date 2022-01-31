@@ -7,7 +7,6 @@ import { LoginComponent } from './components/login/login.component';
 import { UserInfoComponent } from './components/round/user-info/user-info.component';
 import { UserInfosComponent } from './components/round/user-infos/user-infos.component';
 import { UnocardComponent } from './components/round/unocard/unocard.component';
-import { TimesPipe } from './pipes/times.pipe';
 import { InventoryComponent } from './components/round/inventory/inventory.component';
 import { TypeofPipe } from './pipes/typeof.pipe';
 import { CastPipe } from './pipes/cast.pipe';
@@ -31,7 +30,6 @@ import { CounterInputComponent } from './components/shared/counter-input/counter
     UserInfoComponent,
     UserInfosComponent,
     UnocardComponent,
-    TimesPipe,
     InventoryComponent,
     TypeofPipe,
     CastPipe,

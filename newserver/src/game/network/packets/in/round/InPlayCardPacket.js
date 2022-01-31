@@ -15,22 +15,27 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutPlayerLeftRoomPacket = void 0;
-var OutPacket_1 = require("../OutPacket");
-var OutPlayerLeftRoomPacket = /** @class */ (function (_super) {
-    __extends(OutPlayerLeftRoomPacket, _super);
-    function OutPlayerLeftRoomPacket(player) {
+exports.InPlayCardPacket = void 0;
+var InPacket_1 = require("../InPacket");
+var InPlayCardPacket = /** @class */ (function (_super) {
+    __extends(InPlayCardPacket, _super);
+    function InPlayCardPacket(player, cardid) {
         var _this = _super.call(this) || this;
-        _this.action = "playerLeftRoom";
+        _this.cardid = cardid;
         _this.player = player;
         return _this;
     }
-    OutPlayerLeftRoomPacket.prototype.asJSON = function () {
-        return { "action": this.action, "uuid": this.player.getUUID() };
+    InPlayCardPacket.prototype.getCardID = function () {
+        return this.cardid;
     };
-    OutPlayerLeftRoomPacket.prototype.getPlayer = function () {
+    InPlayCardPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    return OutPlayerLeftRoomPacket;
-}(OutPacket_1.OutPacket));
-exports.OutPlayerLeftRoomPacket = OutPlayerLeftRoomPacket;
+    InPlayCardPacket.getFromJSON = function (player, json) {
+        if (!("cardid" in json))
+            return null;
+        return new InPlayCardPacket(player, json["cardid"]);
+    };
+    return InPlayCardPacket;
+}(InPacket_1.InPacket));
+exports.InPlayCardPacket = InPlayCardPacket;

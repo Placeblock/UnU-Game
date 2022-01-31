@@ -19,21 +19,17 @@ exports.OutPlayerChangedNamePacket = void 0;
 var OutPacket_1 = require("../OutPacket");
 var OutPlayerChangedNamePacket = /** @class */ (function (_super) {
     __extends(OutPlayerChangedNamePacket, _super);
-    function OutPlayerChangedNamePacket(player, name) {
+    function OutPlayerChangedNamePacket(player) {
         var _this = _super.call(this) || this;
         _this.action = "playerChangedName";
         _this.player = player;
-        _this.name = name;
         return _this;
     }
     OutPlayerChangedNamePacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON(), "name": this.name };
+        return { "action": this.action, "player": this.player.asJSON() };
     };
     OutPlayerChangedNamePacket.prototype.getPlayer = function () {
         return this.player;
-    };
-    OutPlayerChangedNamePacket.prototype.getName = function () {
-        return this.name;
     };
     return OutPlayerChangedNamePacket;
 }(OutPacket_1.OutPacket));

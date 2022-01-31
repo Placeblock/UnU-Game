@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 exports.__esModule = true;
 exports.InStartRoundPacket = void 0;
-var InPacket_1 = require("./InPacket");
+var InPacket_1 = require("../InPacket");
 var InStartRoundPacket = /** @class */ (function (_super) {
     __extends(InStartRoundPacket, _super);
     function InStartRoundPacket(player, startcardamount, allowdraw2ondraw4, allowdraw4ondraw2, allowdraw4ondraw4, allowwishondraw4, allowdraw4onwish, allowwishonwish) {

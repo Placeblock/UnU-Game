@@ -1,5 +1,5 @@
-import { Player } from "../../../player/Player";
-import { InPacket } from "./InPacket";
+import { Player } from "../../../../player/Player";
+import { InPacket } from "../InPacket";
 
 export class InPlayCardPacket extends InPacket {
     private readonly player: Player;

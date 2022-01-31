@@ -1,29 +1,29 @@
 <p id="header">Runden Einstellungen:</p>
 <div class="settings-item">
     <p>Startcards</p>
-    <app-counter-input [_counterValue]="7" [counterRangeMax]="30" [counterRangeMin]="2" [formControl]="startcards"></app-counter-input>
+    <app-counter-input [_counterValue]="7" [counterRangeMax]="30" [counterRangeMin]="2" [formControl]="startcards" (ngModelChange)="update()"></app-counter-input>
 </div>
 <div class="settings-item">
     <p>4+ on 4+ Cards</p>
-    <app-switch [formControl]="fouronfour"></app-switch>
+    <app-switch [formControl]="fouronfour" (ngModelChange)="update()"></app-switch>
 </div>
 <div class="settings-item">
     <p>2+ on 4+ Cards</p>
-    <app-switch [formControl]="twoonfour"></app-switch>
+    <app-switch [formControl]="twoonfour" (ngModelChange)="update()"></app-switch>
 </div>
 <div class="settings-item">
     <p>4+ on 2+ Cards</p>
-    <app-switch [formControl]="fourontwo"></app-switch>
+    <app-switch [formControl]="fourontwo" (ngModelChange)="update()"></app-switch>
 </div>
 <div class="settings-item">
     <p>Wish on 4+ Cards</p>
-    <app-switch [formControl]="wishonfour"></app-switch>
+    <app-switch [formControl]="wishonfour" (ngModelChange)="update()"></app-switch>
 </div>
 <div class="settings-item">
     <p>4+ on Wish Cards</p>
-    <app-switch [formControl]="fouronwish"></app-switch>
+    <app-switch [formControl]="fouronwish" (ngModelChange)="update()"></app-switch>
 </div>
 <div class="settings-item">
     <p>Wish on Wish Cards</p>
-    <app-switch [formControl]="wishonwish"></app-switch>
+    <app-switch [formControl]="wishonwish" (ngModelChange)="update()"></app-switch>
 </div>

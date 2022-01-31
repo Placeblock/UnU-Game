@@ -1,10 +1,11 @@
 import { generateSlug } from "random-word-slugs";
-import { InStartRoundPacket } from "./network/packets/in/InStartRound";
+import { InStartRoundPacket } from "./network/packets/in/round/InStartRound";
 import { OutPacket } from "./network/packets/out/OutPacket";
 import { OutJoinedRoomPacket } from "./network/packets/out/room/OutJoinedRoomPacket";
 import { OutNewOwnerPacket } from "./network/packets/out/room/OutNewOwnerPacket";
 import { OutPlayerJoinedRoomPacket } from "./network/packets/out/room/OutPlayerJoinedRoomPacket";
 import { OutPlayerLeftRoomPacket } from "./network/packets/out/room/OutPlayerLeftRoomPacket";
+import { OutRoundSettingsPacket } from "./network/packets/out/round/OutRoundSettingsPacket";
 import { Player } from "./player/Player";
 import { RoomManager } from "./RoomManager";
 import { Round } from "./Round";
@@ -15,6 +16,15 @@ export class Room {
     private readonly players: Player[] = [];
     private owner: Player;
     private currentround: Round;
+    private roundsettings: RoundSettings = {
+        "startcardamount":7,
+        "allowwishonwish":true,
+        "allowwishondraw4":true,
+        "allowdraw4onwish":true,
+        "allowdraw4ondraw4":true,
+        "allowdraw4ondraw2":true,
+        "allowdraw2ondraw4":false
+    };
 
     constructor(owner: Player) {
         this.owner = owner;
@@ -63,9 +73,18 @@ export class Room {
         return this.currentround;
     }
 
-    public startNewRound(settings: RoundSettings): Round {
-        var round: Round = new Round(this.players, settings, this);
+    public startNewRound(): Round {
+        var round: Round = new Round(this.players, this.roundsettings, this);
         return round;
+    }
+
+    public setRoundSettings(roundSettings: RoundSettings) {
+        this.roundsettings = roundSettings;
+        this.sendToAllPlayers(new OutRoundSettingsPacket(roundSettings), []);
+    }
+
+    public getRoundSettings(): RoundSettings {
+        return this.roundsettings;
     }
 
     public sendToAllPlayers(packet: OutPacket, filterplayers: Player[]) {
