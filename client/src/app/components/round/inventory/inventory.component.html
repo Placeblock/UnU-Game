@@ -1,0 +1,15 @@
+
+<div class="card-container"
+    *ngFor="let card of this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.gameService.getPlayer())?.getCards(); let index=index"
+    #element
+    (click)="dropCard(element, card)"
+    [ngClass]="this.gameService.getPlayer() == this.gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() ? 'interactable': ''"
+    [ngStyle]="{'transform': 
+        'translateX('+(index*calculateXTranslate()+15)+'px) rotate('+getRotation(index)+'deg)'}">
+    <app-unocard [unucard]="card"></app-unocard>
+</div>
+
+<div class="controls">
+    <fa-icon [icon]="faSort" (click)="this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.gameService.getPlayer())?.sort()"></fa-icon>
+    <fa-icon [icon]="faBullhorn" style="color: red;"></fa-icon>
+</div>

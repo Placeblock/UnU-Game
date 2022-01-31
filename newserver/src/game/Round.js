@@ -188,6 +188,29 @@ var Round = /** @class */ (function () {
             return;
         this.drawCard();
     };
+    Round.prototype.asJSON = function () {
+        var jsonplayers = [];
+        for (var _i = 0, _a = this.players; _i < _a.length; _i++) {
+            var player = _a[_i];
+            jsonplayers.push(player.getUUID());
+        }
+        var jsoninventorys = {};
+        this.inventorys.forEach(function (value, key) {
+            jsoninventorys[key.getUUID()] = value.asJSON();
+        });
+        var jsonleaderboard = [];
+        for (var _b = 0, _c = this.leaderboard; _b < _c.length; _b++) {
+            var player = _c[_b];
+            jsonleaderboard.push(player.getUUID());
+        }
+        return { "players": jsonplayers,
+            "settings": this.settings,
+            "inventorys": jsoninventorys,
+            "leaderboard": jsonleaderboard,
+            "forcedcolor": this.forcedcolor,
+            "currentcard": this.currentcard.asJson(),
+            "currentplayer": this.currentplayer.getUUID() };
+    };
     return Round;
 }());
 exports.Round = Round;

@@ -17,8 +17,8 @@ export class GameGuardGuard implements CanActivate {
     if(gameid != null) {
       this.authService.gameid = gameid;
     }
-    if (this.gameService.gameid == undefined) {
-      this.router.navigate(["create"]);
+    if (this.gameService.getCurrentRoom() == undefined) {
+      this.router.navigate([""]);
       return false;
     }
     return true;

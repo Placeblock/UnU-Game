@@ -1,0 +1,2 @@
+<fa-icon [icon]="faToggleOn" class="switch-active" *ngIf="checked" (click)="toggleChecked()"></fa-icon>
+<fa-icon [icon]="faToggleOn" class="switch-inactive" [rotate]="180" *ngIf="!checked" (click)="toggleChecked()"></fa-icon>

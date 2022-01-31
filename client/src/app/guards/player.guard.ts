@@ -15,7 +15,7 @@ export class PlayerGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (this.gameService.player == undefined) {
+    if (this.gameService.getPlayer() == undefined) {
       this.router.navigate([""]);
       return false;
     }

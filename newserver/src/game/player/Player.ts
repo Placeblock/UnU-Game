@@ -9,14 +9,19 @@ import { OutPacket } from '../network/packets/out/OutPacket';
 import { OutPlayerChangedNamePacket } from '../network/packets/out/room/OutPlayerChangedNamePacket';
 import { OutPlayerLeftRoomPacket } from '../network/packets/out/room/OutPlayerLeftRoomPacket';
 import { OutPlayerLeftRoundPacket } from '../network/packets/out/round/OutPlayerLeftRoundPacket';
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
+import { generateSlug } from "random-word-slugs";
 import { Room } from '../Room';
 import { InJoinRoomPacket } from '../network/packets/in/InJoinRoomPacket';
 import { RoomManager } from '../RoomManager';
 
 export abstract class Player {
     protected readonly uuid: string = v4();
-    protected name: string = uniqueNamesGenerator({"dictionaries":[adjectives, colors, animals],"separator":' '});;
+    protected name: string = generateSlug(2, {"format":"title",
+                                              "partsOfSpeech": ["adjective","noun"],
+                                              "categories": {
+                                                  adjective: ["color","appearance"],
+                                                  noun: ["animals"]
+                                              }})
     protected currentroom: Room;
 
     constructor() {}
@@ -59,12 +64,14 @@ export abstract class Player {
             case "joinRoom":
                 const inJoinRoomPacket = InJoinRoomPacket.getFromJSON(this, data);
                 if(inJoinRoomPacket == null) return;
-                const room = RoomManager.getRoom(inJoinRoomPacket.getUUID());
-                if(room == null) return;
+                const room = RoomManager.getRoom(inJoinRoomPacket.getName());
+                if(room == undefined) return;
                 if(this.currentroom != undefined) {
                     this.currentroom.removePlayer(this);
                 }
+                this.currentroom = room;
                 room.addPlayer(this);
+                break;
             case "quitRoom":
                 if(this.currentroom == undefined) return;
                 this.currentroom.removePlayer(this);
@@ -81,7 +88,7 @@ export abstract class Player {
                 if(inChangeNamePacket == null) return;
                 this.name = inChangeNamePacket.getName();
                 if(this.currentroom == undefined) return;
-                this.currentroom.sendToAllPlayers(new OutPlayerChangedNamePacket(this, inChangeNamePacket.getName()), [this]);
+                this.currentroom.sendToAllPlayers(new OutPlayerChangedNamePacket(this), []);
                 break;
             case "drawCard":
                 const inDrawCardPacket = InDrawCardPacket.getFromJSON(this, data);
@@ -121,6 +128,7 @@ export abstract class Player {
         if(this.currentroom != undefined) {
             this.currentroom.removePlayer(this);
         }
+        this.currentroom == undefined;
     }
     public abstract close();
     

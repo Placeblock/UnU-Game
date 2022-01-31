@@ -19,17 +19,17 @@ exports.InJoinRoomPacket = void 0;
 var InPacket_1 = require("./InPacket");
 var InJoinRoomPacket = /** @class */ (function (_super) {
     __extends(InJoinRoomPacket, _super);
-    function InJoinRoomPacket(player, uuid) {
+    function InJoinRoomPacket(player, name) {
         var _this = _super.call(this) || this;
         _this.player = player;
-        _this.uuid = uuid;
+        _this.name = name;
         return _this;
     }
     InJoinRoomPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    InJoinRoomPacket.prototype.getUUID = function () {
-        return this.uuid;
+    InJoinRoomPacket.prototype.getName = function () {
+        return this.name;
     };
     InJoinRoomPacket.getFromJSON = function (player, json) {
         if (!("uuid" in json))

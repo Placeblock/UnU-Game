@@ -28,7 +28,7 @@ var WebSocketPlayer = /** @class */ (function (_super) {
         _this.send(new OutPlayerDataPacket_1.OutPlayerDataPacket(_this));
         _this.pingtimer = setInterval(function () {
             if (_this.isAlive === false) {
-                close();
+                _this.close();
                 return;
             }
             _this.isAlive = false;
@@ -38,6 +38,10 @@ var WebSocketPlayer = /** @class */ (function (_super) {
             var json = JSON.parse(data.toString());
             if (!("action" in json) || !("data" in json)) {
                 _this.send(new OutInvalidMessagePacket_1.OutInvalidMessagePacket("Provide Action and Data!", json));
+                return;
+            }
+            if (typeof json["data"] != "object") {
+                _this.send(new OutInvalidMessagePacket_1.OutInvalidMessagePacket("Data is a string!", json));
                 return;
             }
             _this.receive(json["action"], json["data"]);
@@ -52,7 +56,6 @@ var WebSocketPlayer = /** @class */ (function (_super) {
         this.ws.send(JSON.stringify(packet.asJSON()));
     };
     WebSocketPlayer.prototype.close = function () {
-        console.log("WS Player Disconnected");
         this.clearUpPlayer();
         this.ws.removeAllListeners();
         clearInterval(this.pingtimer);

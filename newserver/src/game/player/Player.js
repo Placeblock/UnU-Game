@@ -11,16 +11,20 @@ var OutInvalidMessagePacket_1 = require("../network/packets/out/OutInvalidMessag
 var OutPlayerChangedNamePacket_1 = require("../network/packets/out/room/OutPlayerChangedNamePacket");
 var OutPlayerLeftRoomPacket_1 = require("../network/packets/out/room/OutPlayerLeftRoomPacket");
 var OutPlayerLeftRoundPacket_1 = require("../network/packets/out/round/OutPlayerLeftRoundPacket");
-var unique_names_generator_1 = require("unique-names-generator");
+var random_word_slugs_1 = require("random-word-slugs");
 var Room_1 = require("../Room");
 var InJoinRoomPacket_1 = require("../network/packets/in/InJoinRoomPacket");
 var RoomManager_1 = require("../RoomManager");
 var Player = /** @class */ (function () {
     function Player() {
         this.uuid = (0, uuid_1.v4)();
-        this.name = (0, unique_names_generator_1.uniqueNamesGenerator)({ "dictionaries": [unique_names_generator_1.adjectives, unique_names_generator_1.colors, unique_names_generator_1.animals], "separator": ' ' });
+        this.name = (0, random_word_slugs_1.generateSlug)(2, { "format": "title",
+            "partsOfSpeech": ["adjective", "noun"],
+            "categories": {
+                adjective: ["color", "appearance"],
+                noun: ["animals"]
+            } });
     }
-    ;
     Player.prototype.getUUID = function () {
         return this.uuid;
     };
@@ -52,13 +56,15 @@ var Player = /** @class */ (function () {
                 var inJoinRoomPacket = InJoinRoomPacket_1.InJoinRoomPacket.getFromJSON(this, data);
                 if (inJoinRoomPacket == null)
                     return;
-                var room = RoomManager_1.RoomManager.getRoom(inJoinRoomPacket.getUUID());
-                if (room == null)
+                var room = RoomManager_1.RoomManager.getRoom(inJoinRoomPacket.getName());
+                if (room == undefined)
                     return;
                 if (this.currentroom != undefined) {
                     this.currentroom.removePlayer(this);
                 }
+                this.currentroom = room;
                 room.addPlayer(this);
+                break;
             case "quitRoom":
                 if (this.currentroom == undefined)
                     return;
@@ -131,6 +137,7 @@ var Player = /** @class */ (function () {
         if (this.currentroom != undefined) {
             this.currentroom.removePlayer(this);
         }
+        this.currentroom == undefined;
     };
     return Player;
 }());

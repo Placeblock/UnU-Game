@@ -3,20 +3,20 @@ import { InPacket } from "./InPacket";
 
 export class InJoinRoomPacket extends InPacket {
     private readonly player: Player;
-    private readonly uuid: string;
+    private readonly name: string;
 
-    constructor(player: Player, uuid: string) {
+    constructor(player: Player, name: string) {
         super();
         this.player = player;
-        this.uuid = uuid;
+        this.name = name;
     }
 
     public getPlayer(): Player {
         return this.player;
     }
 
-    public getUUID(): string {
-        return this.uuid;
+    public getName(): string {
+        return this.name;
     }
 
     public static getFromJSON(player: Player, json: {}): InJoinRoomPacket {

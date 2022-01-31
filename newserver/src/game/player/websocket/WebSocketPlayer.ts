@@ -17,7 +17,7 @@ export class WebSocketPlayer extends Player {
 
         this.pingtimer = setInterval(() => {
             if (this.isAlive === false) {
-                close();
+                this.close();
                 return;
             }
             this.isAlive = false;
@@ -28,6 +28,10 @@ export class WebSocketPlayer extends Player {
             var json = JSON.parse(data.toString());
             if (!("action" in json) || !("data" in json)) {
                 this.send(new OutInvalidMessagePacket("Provide Action and Data!", json));
+                return;
+            }
+            if(typeof json["data"] != "object") {
+                this.send(new OutInvalidMessagePacket("Data is a string!", json));
                 return;
             }
             this.receive(json["action"],json["data"]);
@@ -45,7 +49,6 @@ export class WebSocketPlayer extends Player {
     }
 
     public close() {
-        console.log("WS Player Disconnected");
         this.clearUpPlayer();
         this.ws.removeAllListeners();
         clearInterval(this.pingtimer);

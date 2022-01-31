@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Color } from 'src/app/models/color';
-import { NumberUnoCard } from 'src/app/models/number-uno-card';
-import { SpecialUnoCard } from 'src/app/models/special-uno-card';
+import { Color } from 'src/app/models/card/color.model';
+import { NumberUnUCard } from 'src/app/models/card/number/number-un-ucard.model';
+import { Draw2UnUCard } from 'src/app/models/card/special/draw2-un-ucard.model';
+import { Draw4UnUCard } from 'src/app/models/card/special/draw4-un-ucard.model';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { GameService } from 'src/app/services/game.service';
-import { Player } from 'src/app/models/player';
+import { Player } from 'src/app/models/player.model';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -19,9 +20,9 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent {
   faHeart = faHeart
   name = new FormControl('');
-  unocard1 = new SpecialUnoCard(1, Color.SPECIAL, "add4");
-  unocard2 = new SpecialUnoCard(2, Color.BLUE, "add2");
-  unocard3 = new NumberUnoCard(3, Color.RED, 5);
+  unucard1 = new Draw4UnUCard();
+  unucard2 = new Draw2UnUCard(Color.BLUE);
+  unucard3 = new NumberUnUCard(3, Color.RED);
 
   constructor(public router: Router, public websocketService: WebsocketService, public gameService: GameService, public authService: AuthService) {
 
@@ -35,15 +36,15 @@ export class LoginComponent {
 
   login() {
     this.websocketService.sendMessage("setName", {"name": this.name.value});
-    if(this.gameService.player != undefined) {
-      this.gameService.player.setName(this.name.value);
+    if(this.gameService.getPlayer() != undefined) {
+      this.gameService.getPlayer()["name"] = this.name.value;
     }
     this.continue();
   }
 
   continue() {
     if (this.authService.gameid != "") {
-      this.websocketService.sendMessage('joinRoom', this.authService.gameid);
+      this.websocketService.sendMessage('joinRoom', {"uuid":this.authService.gameid});
       return;
     }else {
       this.websocketService.sendMessage('createRoom', {});

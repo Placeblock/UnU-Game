@@ -1,42 +1,33 @@
 import { Injectable } from '@angular/core';
-import { Color } from '../models/color';
-import { Player } from '../models/player';
+import { Player } from '../models/player.model';
+import { Room } from '../models/room.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  players: {[id: string]: Player} = {};
-  currentplayer: Player | undefined = undefined;
-  choosecolor: boolean = false;
-  mandatorycolor: Color | null = null;
-  player: Player | undefined = undefined;
-  gameid: string = "";
+  private curretroom: Room | undefined;
+  private player: Player | undefined = undefined;
 
-  getPlayerById(id: string): Player {
-    return this.players[id];
+  constructor() {
   }
 
-  getPlayer() {
+  getPlayer(): Player{
+    if(this.player == undefined) {
+      return new Player("undefined","undefined");
+    }
     return this.player;
   }
 
-  getPlayers(): {[id: string]: Player} {
-    return this.players;
+  setPlayer(player: Player) {
+    this.player = player;
   }
 
-  getCurrentPlayer(): Player | undefined {
-    return this.currentplayer;
+  getCurrentRoom(): Room | undefined {
+    return this.curretroom;
   }
 
-  chooseColor() {
-    this.choosecolor = true;
-  }
-
-  setMandatoryColor(color: Color) {
-    this.mandatorycolor = color;
-  }
-
-  constructor() {
+  setCurrentRoom(room: Room) {
+    this.curretroom = room;
   }
 }

@@ -1,6 +1,7 @@
-import { InCreateRoomPacket } from "./network/packets/in/InCreateRoomPacket";
+import { generateSlug } from "random-word-slugs";
 import { InStartRoundPacket } from "./network/packets/in/InStartRound";
 import { OutPacket } from "./network/packets/out/OutPacket";
+import { OutJoinedRoomPacket } from "./network/packets/out/room/OutJoinedRoomPacket";
 import { OutNewOwnerPacket } from "./network/packets/out/room/OutNewOwnerPacket";
 import { OutPlayerJoinedRoomPacket } from "./network/packets/out/room/OutPlayerJoinedRoomPacket";
 import { OutPlayerLeftRoomPacket } from "./network/packets/out/room/OutPlayerLeftRoomPacket";
@@ -10,19 +11,19 @@ import { Round } from "./Round";
 import { RoundSettings } from "./RoundSettings";
 
 export class Room {
-    private uuid: string;
+    private name: string;
     private readonly players: Player[] = [];
     private owner: Player;
     private currentround: Round;
 
     constructor(owner: Player) {
         this.owner = owner;
-        console.log("new room");
+        this.name = generateSlug()
         this.addPlayer(this.owner);
     }
 
-    public getUUID(): string {
-        return this.uuid;
+    public getName(): string {
+        return this.name;
     }
 
     public getPlayers(): Player[] {
@@ -35,7 +36,8 @@ export class Room {
             return;
         }
         this.players.push(player);
-        this.sendToAllPlayers(new OutPlayerJoinedRoomPacket(player), []);
+        this.sendToAllPlayers(new OutPlayerJoinedRoomPacket(player), [player]);
+        player.send(new OutJoinedRoomPacket(this));
     }
 
     public removePlayer(player: Player) {
@@ -43,8 +45,10 @@ export class Room {
             console.warn("Tried to remove non existing player from Room!");
             return;
         }
-        this.players.splice(this.players.indexOf(player));
-        this.currentround.removePlayer(player);
+        this.players.splice(this.players.indexOf(player), 1);
+        if(this.currentround != undefined) {
+            this.currentround.removePlayer(player);
+        }
         this.sendToAllPlayers(new OutPlayerLeftRoomPacket(player), []);
         if(player == this.owner) {
             this.owner = this.players[0];
@@ -74,5 +78,13 @@ export class Room {
     public receiveStartRound(packet: InStartRoundPacket) {
         if(this.currentround != undefined) return;
         this.currentround = new Round(this.players, packet.getRoundSettings(), this);
+    }
+
+    public asJSON(): {} {
+        const jsonplayers = [];
+        for(let player of this.players) {
+            jsonplayers.push(player.asJSON());
+        }
+        return {"name":this.name,"owner":this.owner.asJSON(),"players":jsonplayers,"round":this.currentround?.asJSON()};
     }
 }

@@ -211,4 +211,26 @@ export class Round {
         if(this.currentplayerplayedcard) return;
         this.drawCard();
     }
+
+    public asJSON(): {} {
+        const jsonplayers = [];
+        for(let player of this.players) {
+            jsonplayers.push(player.getUUID());
+        }
+        const jsoninventorys = {};
+        this.inventorys.forEach((value, key) => {
+            jsoninventorys[key.getUUID()] = value.asJSON();
+        })
+        const jsonleaderboard = [];
+        for(let player of this.leaderboard) {
+            jsonleaderboard.push(player.getUUID());
+        }
+        return {"players":jsonplayers,
+                "settings":this.settings,
+                "inventorys":jsoninventorys,
+                "leaderboard":jsonleaderboard,
+                "forcedcolor":this.forcedcolor,
+                "currentcard":this.currentcard.asJson(),
+                "currentplayer":this.currentplayer.getUUID()};
+    }
 }

@@ -1,0 +1,1 @@
+<app-user-info *ngFor="let player of gameService.getCurrentRoom()?.getCurrentRound()?.getPlayers()" [player]="player"></app-user-info>
