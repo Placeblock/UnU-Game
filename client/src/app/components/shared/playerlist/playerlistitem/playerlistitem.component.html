@@ -1,0 +1,10 @@
+<div class="playeritem-section">
+    <fa-icon tooltip="First Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-1" *ngIf="this.ranking == 1"></fa-icon>
+    <fa-icon tooltip="Second Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-2" *ngIf="this.ranking == 2"></fa-icon>
+    <fa-icon tooltip="Third Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-3" *ngIf="this.ranking == 3"></fa-icon>
+    <p>{{this.name}}</p>
+</div>
+<div class="playeritem-section">
+    <fa-icon tooltip="You" placement="top" [showDelay]="100" [icon]="faUser" id="self-tag" *ngIf="this.isMe"></fa-icon>
+    <fa-icon tooltip="Admin of this Room" placement="top" [showDelay]="100" [icon]="faEthereum" id="owner-tag" *ngIf="this.isOwner"></fa-icon>
+</div>

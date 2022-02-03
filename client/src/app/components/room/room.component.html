@@ -1,27 +1,16 @@
 <fa-icon [icon]="faSignOut" id="signout" tooltip="Leave Room" placement="right" [showDelay]="500"></fa-icon>
-<div id="playerlist">
-    <p id="playerlist-header">Players</p>
-    <div id="playerlist-content">
-        <div class="playeritem" *ngFor="let player of gameService.getCurrentRoom()?.getPlayers()">
-            <div class="playeritem-section">
-                <fa-icon tooltip="First Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-1" *ngIf="player == gameService.getCurrentRoom()?.getLeaderboardPlayer(0)"></fa-icon>
-                <fa-icon tooltip="Second Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-2" *ngIf="player == gameService.getCurrentRoom()?.getLeaderboardPlayer(1)"></fa-icon>
-                <fa-icon tooltip="Third Place" placement="top" [showDelay]="100" [icon]="faMedal" class="medal-tag" id="medal-3" *ngIf="player == gameService.getCurrentRoom()?.getLeaderboardPlayer(2)"></fa-icon>
-                <p>{{player["name"] }}</p>
-            </div>
-            <div class="playeritem-section">
-                <fa-icon tooltip="You" placement="top" [showDelay]="100" [icon]="faUser" id="self-tag" *ngIf="player == gameService.getPlayer()"></fa-icon>
-                <fa-icon tooltip="Admin of this Room" placement="top" [showDelay]="100" [icon]="faEthereum" id="owner-tag" *ngIf="player == gameService.getCurrentRoom()?.getOwner()"></fa-icon>
+<ng-container *ngIf="this.players$ | async as resolved">
+    <app-playerlist [players]="resolved"></app-playerlist>
+    <ng-container *ngIf="resolved.length >= 2 && (this.me$ | async) == (this.owner$ | async)">
+        <hr>
+        <div id="round-creation">
+            <button id="create-button">Runde Erstellen</button>
+            <fa-icon id="create-settings" [icon]="faCogs" (click)="toggleShowingSettings()"></fa-icon>
+            <div id="create-container" *ngIf="this.isShowingSettings">
+                <app-createround></app-createround>
             </div>
         </div>
-    </div>
-    <hr *ngIf="getPlayerCount() >= 2 && gameService.getPlayer() == gameService.getCurrentRoom()?.getOwner()">
-    <div id="round-creation" *ngIf="getPlayerCount() >= 2 && gameService.getPlayer() == gameService.getCurrentRoom()?.getOwner()">
-        <button id="create-button">Runde Erstellen</button>
-        <fa-icon id="create-settings" [icon]="faCogs" (click)="toggleShowingSettings()"></fa-icon>
-        <div id="create-container" *ngIf="this.isShowingSettings">
-            <app-createround></app-createround>
-        </div>
-    </div>
-</div>
+    </ng-container>
+</ng-container>
+
 <ng-particles [id]="'particles'" [options]="particlesOptions"></ng-particles>

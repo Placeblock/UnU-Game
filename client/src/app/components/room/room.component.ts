@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { GameService } from 'src/app/services/game.service';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { faCogs, faMedal, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { RoomFacade } from 'src/app/facades/room-facade';
+import { Observable } from 'rxjs';
+import { Player } from 'src/app/models/player.model';
 
 @Component({
   selector: 'app-room',
@@ -9,11 +11,9 @@ import { faCogs, faMedal, faSignOutAlt, faUser } from '@fortawesome/free-solid-s
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent {
-  isShowingSettings = false;
-
-  toggleShowingSettings() {
-    this.isShowingSettings = !this.isShowingSettings;
-  }
+  players$: Observable<Player[]>;
+  owner$: Observable<Player | null>;
+  me$: Observable<Player | null>;
 
   faEthereum = faEthereum;
   faMedal = faMedal;
@@ -21,16 +21,11 @@ export class RoomComponent {
   faUser = faUser;
   faCogs = faCogs;
 
-  constructor(public gameService: GameService) { }
-
-  getPlayerCount(): number {
-    const length = this.gameService.getCurrentRoom()?.getPlayers()?.length;
-    if(length != undefined) {
-      return length;
-    }else {
-      return 0;
-    }
+  constructor(private roomFacadce: RoomFacade) {
+    this.players$ = roomFacadce.getPlayers();
+    this.owner$ = roomFacadce.getOwner();
   }
+
 
   particlesOptions = {
     "background": {

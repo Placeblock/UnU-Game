@@ -22,6 +22,8 @@ import { TooltipModule } from 'ng2-tooltip-directive';
 import { RoundSettingsComponent } from './components/room/roundsettings/roundsettings.component';
 import { SwitchComponent } from './components/shared/switch/switch.component';
 import { CounterInputComponent } from './components/shared/counter-input/counter-input.component';
+import { PlayerlistComponent } from './components/shared/playerlist/playerlist.component';
+import { PlayerlistitemComponent } from './components/shared/playerlist/playerlistitem/playerlistitem.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { CounterInputComponent } from './components/shared/counter-input/counter
     RoomComponent,
     RoundSettingsComponent,
     SwitchComponent,
-    CounterInputComponent
+    CounterInputComponent,
+    PlayerlistComponent,
+    PlayerlistitemComponent
   ],
   imports: [
     BrowserModule,
