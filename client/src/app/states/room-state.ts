@@ -1,10 +1,21 @@
 import { BehaviorSubject, Observable } from "rxjs";
 import { Player } from "../models/player.model";
+import { RoundSettings } from "../models/round-settings.model";
 
 export class RoomState {
     private players$ = new BehaviorSubject<Player[]>([]);
     private owner$ = new BehaviorSubject<Player | null>(null);
     private name$ = new BehaviorSubject<string>("");
+    private isShowingSettings$ = new BehaviorSubject<boolean>(false);
+    private settings$ = new BehaviorSubject<RoundSettings>({
+        "allowdraw2ondraw4":true,
+        "allowdraw4ondraw2":false,
+        "allowdraw4ondraw4":true,
+        "allowdraw4onwish":true,
+        "allowwishondraw4":true,
+        "allowwishonwish":true,
+        "startcardamount":7
+    });
 
     getPlayers(): Observable<Player[]> {
         return this.players$.asObservable();
@@ -12,6 +23,10 @@ export class RoomState {
 
     getOwner(): Observable<Player | null> {
         return this.owner$.asObservable();
+    }
+
+    setOwner(player: Player) {
+        this.owner$.next(player);
     }
 
     addPlayer(player: Player) {
@@ -28,5 +43,21 @@ export class RoomState {
 
     setName(name: string) {
         this.name$.next(name);
+    }
+
+    getSettings(): Observable<RoundSettings> {
+        return this.settings$.asObservable();
+    }
+
+    setSettings(settings: RoundSettings) {
+        this.settings$.next(settings);
+    }
+
+    isShowingSettings(): Observable<boolean> {
+        return this.isShowingSettings$;
+    }
+
+    toggleShowSettings() {
+        this.isShowingSettings$.next(!this.isShowingSettings$.getValue());
     }
 }

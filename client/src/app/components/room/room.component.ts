@@ -4,6 +4,7 @@ import { faCogs, faMedal, faSignOutAlt, faUser } from '@fortawesome/free-solid-s
 import { RoomFacade } from 'src/app/facades/room-facade';
 import { Observable } from 'rxjs';
 import { Player } from 'src/app/models/player.model';
+import { RoomState } from 'src/app/states/room-state';
 
 @Component({
   selector: 'app-room',
@@ -14,6 +15,7 @@ export class RoomComponent {
   players$: Observable<Player[]>;
   owner$: Observable<Player | null>;
   me$: Observable<Player | null>;
+  isShowingSettings$: Observable<boolean>;
 
   faEthereum = faEthereum;
   faMedal = faMedal;
@@ -21,9 +23,14 @@ export class RoomComponent {
   faUser = faUser;
   faCogs = faCogs;
 
-  constructor(private roomFacadce: RoomFacade) {
-    this.players$ = roomFacadce.getPlayers();
-    this.owner$ = roomFacadce.getOwner();
+  constructor(private roomState: RoomState) {
+    this.players$ = roomState.getPlayers();
+    this.owner$ = roomState.getOwner();
+    this.isShowingSettings$ = roomState.isShowingSettings();
+  }
+
+  toggleShowSettings() {
+    this.roomState.toggleShowSettings();
   }
 
 

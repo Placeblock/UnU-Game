@@ -5,8 +5,8 @@
         <hr>
         <div id="round-creation">
             <button id="create-button">Runde Erstellen</button>
-            <fa-icon id="create-settings" [icon]="faCogs" (click)="toggleShowingSettings()"></fa-icon>
-            <div id="create-container" *ngIf="this.isShowingSettings">
+            <fa-icon id="create-settings" [icon]="faCogs" (click)="toggleShowSettings()"></fa-icon>
+            <div id="create-container" *ngIf="this.isShowingSettings$">
                 <app-createround></app-createround>
             </div>
         </div>
