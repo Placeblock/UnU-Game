@@ -10,15 +10,12 @@ var RoomManager = /** @class */ (function () {
             return;
         }
         this.registeredRooms[room.getName()] = room;
-        console.log("registered room:");
-        console.log(room.getName());
     };
     RoomManager.unregisterRoom = function (room) {
         if (!(room.getName() in this.registeredRooms)) {
             console.warn("Tried to unregister non existing Room!");
             return;
         }
-        console.log("unregistered Room");
         delete this.registeredRooms[room.getName()];
     };
     RoomManager.getRegisteredRooms = function () {

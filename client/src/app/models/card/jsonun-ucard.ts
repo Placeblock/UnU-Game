@@ -1,5 +1,5 @@
 export interface JSONUnUCard {
-    cardid: string,
+    uuid: string,
     type: string,
     number: number,
     color: string

@@ -1,6 +1,5 @@
 import { v4 } from "uuid";
 import { Round } from "../Round";
-import { NumberUnoCard } from "./number/NumberUnoCard";
 
 export abstract class UnoCard {
     public static readonly colors: string[] = [
@@ -24,10 +23,6 @@ export abstract class UnoCard {
 
     public static randomColor(): string {
         return UnoCard.colors[Math.floor(Math.random()* UnoCard.colors.length)];
-    }
-
-    public static getRandomCard() {
-        return new NumberUnoCard("BLUE", 0);
     }
 
 }

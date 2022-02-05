@@ -1,5 +1,9 @@
 import { NumberUnoCard } from "./card/number/NumberUnoCard";
+import { randomCard } from "./card/RandomCard";
 import { DrawFourUnoCard } from "./card/special/DrawFourUnoCard";
+import { DrawTwoUnoCard } from "./card/special/DrawTwoUnoCard";
+import { InvertDirectionUnoCard } from "./card/special/InvertDirectionUnoCard";
+import { SuspendUnUCard } from "./card/special/SuspendUnoCard";
 import { WishUnoCard } from "./card/special/WishUnoCard";
 import { UnoCard } from "./card/UnoCard";
 import { Inventory } from "./Inventory";
@@ -11,24 +15,28 @@ import { OutForcedColorPacket } from "./network/packets/out/round/OutForcedColor
 import { OutInventoryDataPacket } from "./network/packets/out/round/OutInventoryDataPacket";
 import { OutPlayCardInvalidPacket } from "./network/packets/out/round/OutPlayCardInvalidPacket";
 import { OutPlayerDrawHiddenPacket } from "./network/packets/out/round/OutPlayerDrawHiddenPacket";
-import { OutPlayerDrawPacket } from "./network/packets/out/round/OutPlayerDrawPacket";
+import { OutDrawPacket } from "./network/packets/out/round/OutDrawPacket";
 import { OutPlayerLeftRoundPacket } from "./network/packets/out/round/OutPlayerLeftRoundPacket";
 import { OutPlayerPlayCardPacket } from "./network/packets/out/round/OutPlayerPlayCardPacket";
 import { OutWishCardInvalidPacket } from "./network/packets/out/round/OutWishCardInvalidPacket";
 import { Player } from "./player/Player";
 import { Room } from "./Room";
 import { RoundSettings } from "./RoundSettings";
+import { OutWishCardPacket } from "./network/packets/out/round/OutWishCardPacket";
 
 export class Round {
     private readonly room: Room;
     private readonly players: Player[] = [];
     private currentplayerplayedcard: boolean = false;
+    private currentplayerdrawedcard: boolean = false;
     private currentplayer: Player;
     private currentcard: UnoCard;
     private forcedcolor: string;
     private readonly inventorys: Map<Player, Inventory> = new Map;
     private readonly leaderboard: Player[] = [];
     private settings: RoundSettings;
+    private direction: boolean = true;
+    private currentdrawamount: number = 0;
 
     constructor(players: Player[], settings: RoundSettings, room: Room) {
         this.room = room;
@@ -39,13 +47,21 @@ export class Round {
             const cardjsonlist = [];
             this.inventorys.set(player, new Inventory());
             for(var i: number = 0; i < this.settings.startcardamount; i++) {
-                var card: UnoCard = UnoCard.getRandomCard();
+                var card: UnoCard = randomCard();
                 cardjsonlist.push(card.asJson());
                 this.inventorys.get(player).addCard(card);
+                this.currentcard = card;
             }
+            this.inventorys.get(player).addCard(new WishUnoCard());
+            this.inventorys.get(player).addCard(new DrawFourUnoCard());
+            this.inventorys.get(player).addCard(new DrawFourUnoCard());
+            this.inventorys.get(player).addCard(new DrawFourUnoCard());
+            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
+            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
+            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
+            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
             player.send(new OutInventoryDataPacket(player, this.inventorys.get(player)));
         }
-        this.currentcard = new NumberUnoCard(UnoCard.randomColor(), 1);
     }
 
     getForcedColor(): string {
@@ -80,24 +96,61 @@ export class Round {
 
     setForcedColor(color: string, player?: Player) {
         this.forcedcolor = color;
-        this.room.sendToAllPlayers(new OutForcedColorPacket(player, color), []);
+        this.room.sendToAllPlayers(new OutForcedColorPacket(color), []);
     }
 
     playCard(unoCard: UnoCard) {
         this.currentcard = unoCard;
         this.getPlayerInventory(this.currentplayer).removeCard(unoCard);
-        this.room.sendToAllPlayers(new OutPlayerPlayCardPacket(this.currentplayer, unoCard), [this.currentplayer]);
+        this.room.sendToAllPlayers(new OutPlayerPlayCardPacket(this.currentplayer, unoCard), []);
         this.currentplayerplayedcard = true;
         if(this.isFinished()) {
             //TODO END ROUND (Add to Leaderboard)
         }
+        var nextPlayer = this.getNextPlayer(this.currentplayer, true);
+        if(unoCard instanceof NumberUnoCard) {
+            this.drawCard(this.currentdrawamount);
+            this.currentdrawamount = 0;
+            this.setForcedColor(undefined);
+            this.nextPlayer(nextPlayer);
+        }else if(unoCard instanceof InvertDirectionUnoCard) {
+            this.drawCard(this.currentdrawamount);
+            this.currentdrawamount = 0;
+            this.direction = !this.direction;
+            this.setForcedColor(undefined);
+            this.nextPlayer(nextPlayer);
+        }else if(unoCard instanceof SuspendUnUCard) {
+            this.drawCard(this.currentdrawamount);
+            this.currentdrawamount = 0;
+            nextPlayer = this.getNextPlayer(nextPlayer, true);
+            this.setForcedColor(undefined);
+            this.nextPlayer(nextPlayer);
+        }else if(unoCard instanceof DrawTwoUnoCard) {
+            this.currentdrawamount += 2;
+            this.setForcedColor(undefined);
+            this.nextPlayer(nextPlayer);
+        }else if(unoCard instanceof DrawFourUnoCard) {
+            this.currentdrawamount += 4;
+            this.currentplayer.send(new OutWishCardPacket());
+        }else if(unoCard instanceof WishUnoCard) {
+            this.currentplayer.send(new OutWishCardPacket());
+        }
     }
 
-    drawCard() {
-        const randomcard = UnoCard.getRandomCard();
-        this.getPlayerInventory(this.currentplayer).addCard(randomcard);
-        this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
-        this.currentplayer.send(new OutPlayerDrawPacket(this.currentplayer, randomcard));
+    drawCard(amount: number = 1) {
+        for(var i = 0; i < amount; i ++) {
+            const randomcard = randomCard();
+            this.getPlayerInventory(this.currentplayer).addCard(randomcard);
+            this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
+            this.currentplayer.send(new OutDrawPacket(randomcard));
+        }
+        this.currentplayerdrawedcard = true;
+        for(var card of this.getPlayerInventory(this.currentplayer).getCards()) {
+            if(this.currentcard.isValidNextCard(this, card)) {
+                return;
+            }
+        }
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     }
 
     removePlayer(player: Player) {
@@ -109,15 +162,16 @@ export class Round {
             return;
         }
         if(this.currentplayer == player) {
-            this.nextPlayer();
+            this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
         }
         this.room.sendToAllPlayers(new OutPlayerLeftRoundPacket(player), []);
     }
 
-    nextPlayer() {
-        this.currentplayer = this.getNextPlayer(this.currentplayer, true);
+    nextPlayer(player: Player) {
         this.currentplayerplayedcard = false;
-        this.room.sendToAllPlayers(new OutCurrentPlayerPacket(this.currentplayer), []);
+        this.currentplayerdrawedcard = false;
+        this.currentplayer = player;
+        this.room.sendToAllPlayers(new OutCurrentPlayerPacket(player), []);
     }
 
     isFinished(): Player | null {
@@ -129,37 +183,27 @@ export class Round {
     }
 
     getNextPlayer(player: Player, hasCards: boolean) {
+        var players = this.players;
         if(hasCards) {
-            const playerwithcards = this.getPlayersWithCards();
-            if(playerwithcards.indexOf(player) == this.players.length) {
-                return playerwithcards[0];
+            players = this.getPlayersWithCards();
+        }
+        if(this.direction) {
+            if(players.indexOf(player) == players.length-1) {
+                return players[0];
             }else {
-                return playerwithcards[playerwithcards.indexOf(player)+1];
+                return players[players.indexOf(player)+1];
             }
         }else {
-            if(this.players.indexOf(player) == this.players.length) {
-                return this.players[0];
+            if(players.indexOf(player) == 0) {
+                return players[players.length-1];
             }else {
-                return this.players[this.players.indexOf(player)+1];
+                return players[players.indexOf(player)-1];
             }
         }
-    }
-
-    public getStartCardAmount(): number {
-        return this.settings.startcardamount;
     }
 
     public getSettings(): RoundSettings {
         return this.settings;
-    }
-
-    protected getUnoCardFromListById(uuid: string, list: UnoCard[]): UnoCard | null {
-        for(var item of list) {
-            if(item.getUUID() == uuid) {
-                return item;
-            }
-        }
-        return null;
     }
 
     public receivePlayCard(packet: InPlayCardPacket) {
@@ -195,21 +239,23 @@ export class Round {
             player.send(new OutWishCardInvalidPacket("Play a card first"));
             return;
         }
-        if(this.currentcard instanceof WishUnoCard ||this.currentcard instanceof DrawFourUnoCard) {
+        if(!(this.currentcard instanceof WishUnoCard) && !(this.currentcard instanceof DrawFourUnoCard)) {
             player.send(new OutWishCardInvalidPacket("No valid Previus card"));
             return;
         }
-        if(color != "red" && color != "blue" && color != "yellow" && color != "green") {
+        if(color != "RED" && color != "BLUE" && color != "YELLOW" && color != "GREEN") {
             player.send(new OutWishCardInvalidPacket("Invalid Color"));
             return;
         }
         this.setForcedColor(color, player);
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     }
 
     public receiveDrawCard(packet: InDrawCardPacket) {
         const player = packet.getPlayer();
         if(player != this.currentplayer) return;
         if(this.currentplayerplayedcard) return;
+        if(this.currentplayerdrawedcard) return;
         this.drawCard();
     }
 
@@ -220,7 +266,11 @@ export class Round {
         }
         const jsoninventorys = [];
         this.inventorys.forEach((value, key) => {
-            jsoninventorys.push({"player":key.asJSON(), "cards":value.getCards().length});
+            const cards = [];
+            for (var card of value.getCards()) {
+                cards.push(card.getUUID());
+            }
+            jsoninventorys.push({"player":key.asJSON(), "cards":cards});
         })
         const jsonleaderboard = [];
         for(let player of this.leaderboard) {
@@ -232,6 +282,6 @@ export class Round {
                 "leaderboard":jsonleaderboard,
                 "forcedcolor":this.forcedcolor,
                 "currentcard":this.currentcard.asJson(),
-                "currentplayer":this.currentplayer.getUUID()};
+                "currentplayer":this.currentplayer.asJSON()};
     }
 }

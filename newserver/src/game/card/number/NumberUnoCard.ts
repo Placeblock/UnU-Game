@@ -25,12 +25,12 @@ export class NumberUnoCard extends UnoCard implements Colorable {
     }
 
     isValidNextCard(round: Round, card: UnoCard): boolean {
-        if("color" in card && this.color != card["color"]) return false;
-        if(card instanceof NumberUnoCard && card.number != this.number) return false;
+        if((card instanceof NumberUnoCard && card.number != this.number) && 
+            "color" in card && this.color != card["color"]) return false;
         return true;
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"number","color": this.color, "number": this.number};
+        return {"uuid":this.uuid,"type":"number","color": this.color, "number": this.number};
     }
 }

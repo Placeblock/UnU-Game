@@ -35,14 +35,13 @@ var NumberUnoCard = /** @class */ (function (_super) {
         return new NumberUnoCard(UnoCard_1.UnoCard.randomColor(), Math.floor(Math.random() * 9) + 0);
     };
     NumberUnoCard.prototype.isValidNextCard = function (round, card) {
-        if ("color" in card && this.color != card["color"])
-            return false;
-        if (card instanceof NumberUnoCard && card.number != this.number)
+        if ((card instanceof NumberUnoCard && card.number != this.number) &&
+            "color" in card && this.color != card["color"])
             return false;
         return true;
     };
     NumberUnoCard.prototype.asJson = function () {
-        return { "cardid": this.uuid, "type": "number", "color": this.color, "number": this.number };
+        return { "uuid": this.uuid, "type": "number", "color": this.color, "number": this.number };
     };
     return NumberUnoCard;
 }(UnoCard_1.UnoCard));

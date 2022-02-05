@@ -1,22 +1,25 @@
 
-<ng-container *ngIf="this.roomState.getMe() | async as me">
-    <!--<ng-container *ngIf="this.roundState.getInventory(me) | async as inventory">
-        <ng-container *ngIf="inventory.getCards() | async as cards">`
+<ng-container *ngIf="this.roomState.me$ | async as me">
+    <ng-container *ngIf="this.roundState.inventorys$ | async as inventorys">
+        <ng-container *ngIf="inventorys.get(me.uuid)?.cards$ | async as cards">`
             <div class="card-container"
                 *ngFor="let card of cards let index=index"
                 #element
                 (click)="dropCard(element, card)"
-                [ngClass]="(this.roomState.getMe() | async) == (this.roundState.getCurrentPlayer() | async) ? 'interactable': ''"
-                [ngStyle]="{'transform': 
-                    'translateX('+(index*calculateXTranslate(cards.length)+15)+'px) rotate('+ inventory.calculateRotation(index) + ')'}">
+                [ngClass]="(this.roomState.me$ | async)?.uuid == (this.roundState.currentplayer$ | async)?.uuid ? 'interactable': ''"
+                [ngStyle]="{'transform': 'translateX('+ (inventorys.get(me.uuid)?.calculateXTranslate(index)) + 'px) rotate('+ (inventorys.get(me.uuid)?.calculateRotation(index)) + 'deg)'}">
                 <app-unocard [unucard]="card"></app-unocard>
             </div>
         </ng-container>
-    </ng-container>-->
+        <div class="controls">
+            <fa-icon (click)="inventorys.get(me.uuid)?.sort()" tooltip="Sort Inventory" placement="top" [showDelay]="100" [icon]="faSort" style="color: rgb(130, 130, 255);"></fa-icon>
+            <fa-icon *ngIf="(this.roundState.currentplayer$ | async)?.uuid == me.uuid" 
+                     tooltip="End Turn" 
+                     placement="top" 
+                     [showDelay]="100" 
+                     [icon]="faCheck" 
+                     style="color: green;"></fa-icon>
+            <fa-icon tooltip="UNU!" placement="top" [showDelay]="100" [icon]="faBullhorn" style="color: red;"></fa-icon>
+        </div>
+    </ng-container>
 </ng-container>
-
-
-<div class="controls">
-    <fa-icon [icon]="faSort"></fa-icon>
-    <fa-icon [icon]="faBullhorn" style="color: red;"></fa-icon>
-</div>

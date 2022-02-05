@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
 import { RoomState } from 'src/app/states/room-state.service';
 
 @Component({
@@ -8,10 +7,6 @@ import { RoomState } from 'src/app/states/room-state.service';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent {
-  roundRunning$: Observable<boolean>;
 
-  constructor(private roomState: RoomState) {
-    this.roundRunning$ = roomState.isRoundRunning();
-  }
-
+  constructor(public roomState: RoomState) {}
 }

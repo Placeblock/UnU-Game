@@ -19,18 +19,14 @@ exports.OutForcedColorPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
 var OutForcedColorPacket = /** @class */ (function (_super) {
     __extends(OutForcedColorPacket, _super);
-    function OutForcedColorPacket(player, color) {
+    function OutForcedColorPacket(color) {
         var _this = _super.call(this) || this;
         _this.action = "forcedColor";
-        _this.player = player;
         _this.color = color;
         return _this;
     }
     OutForcedColorPacket.prototype.asJSON = function () {
-        return { "action": this.action, "playerid": this.player.asJSON(), "color": this.color };
-    };
-    OutForcedColorPacket.prototype.getPlayer = function () {
-        return this.player;
+        return { "action": this.action, "color": this.color };
     };
     OutForcedColorPacket.prototype.getColor = function () {
         return this.color;

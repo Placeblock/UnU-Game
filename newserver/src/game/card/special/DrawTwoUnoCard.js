@@ -40,7 +40,7 @@ var DrawTwoUnoCard = /** @class */ (function (_super) {
         return this.color;
     };
     DrawTwoUnoCard.prototype.asJson = function () {
-        return { "cardid": this.uuid, "type": "draw2", "color": this.color };
+        return { "uuid": this.uuid, "type": "draw2", "color": this.color };
     };
     return DrawTwoUnoCard;
 }(SpecialUnoCard_1.SpecialUnoCard));

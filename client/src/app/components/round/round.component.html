@@ -1,5 +1,19 @@
 <app-user-infos></app-user-infos>
-<ng-container *ngIf="this.currentcard$ | async as resolved">
-    <app-unocard [unucard]="resolved"></app-unocard>
-</ng-container>
+<div>{{roundState.drawqueue}}</div>
+<div id="center-container">
+    <div id="cardstack">
+        <div tooltip="Draw Card" placement="top" [showDelay]="100" id="stackcard-container" (click)="drawCard()" *ngFor="let item of [].constructor(5); let i = index">
+            <app-unocard [unucard]="this.stackCard" [side]="'back'"></app-unocard>
+        </div>
+    </div>
+    <ng-container *ngIf="roundState.currentcard$ | async as resolved">
+        <app-unocard [unucard]="resolved"></app-unocard>
+    </ng-container>
+</div>
 <app-inventory></app-inventory>
+<div id="forcecolorselect" *ngIf="roundState.showforcecolorselect$ | async">
+    <div id="red" (click)="forceColorSelect(Color.RED)">ROT</div>
+    <div id="blue" (click)="forceColorSelect(Color.BLUE)">BLAU</div>
+    <div id="green" (click)="forceColorSelect(Color.GREEN)">GRÜN</div>
+    <div id="yellow" (click)="forceColorSelect(Color.YELLOW)">GELB</div>
+</div>

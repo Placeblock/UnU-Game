@@ -15,29 +15,30 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.WishUnoCard = void 0;
-var DrawFourUnoCard_1 = require("./DrawFourUnoCard");
+exports.SuspendUnUCard = void 0;
+var UnoCard_1 = require("../UnoCard");
 var SpecialUnoCard_1 = require("./SpecialUnoCard");
-var WishUnoCard = /** @class */ (function (_super) {
-    __extends(WishUnoCard, _super);
-    function WishUnoCard() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var SuspendUnUCard = /** @class */ (function (_super) {
+    __extends(SuspendUnUCard, _super);
+    function SuspendUnUCard(color) {
+        var _this = _super.call(this) || this;
+        _this.color = color;
+        return _this;
     }
-    WishUnoCard.prototype.getRandom = function () {
-        return new WishUnoCard();
+    SuspendUnUCard.prototype.getRandom = function () {
+        return new SuspendUnUCard(UnoCard_1.UnoCard.randomColor());
     };
-    WishUnoCard.prototype.isValidNextCard = function (round, card) {
-        if ("color" in card && card["color"] != round.getForcedColor())
-            return false;
-        if (card instanceof WishUnoCard && !round.getSettings().allowwishonwish)
-            return false;
-        if (card instanceof DrawFourUnoCard_1.DrawFourUnoCard && !round.getSettings().allowdraw4onwish)
+    SuspendUnUCard.prototype.isValidNextCard = function (round, card) {
+        if ("color" in card && card["color"] != this.color)
             return false;
         return true;
     };
-    WishUnoCard.prototype.asJson = function () {
-        return { "uuid": this.uuid, "type": "wish" };
+    SuspendUnUCard.prototype.getColor = function () {
+        return this.color;
     };
-    return WishUnoCard;
+    SuspendUnUCard.prototype.asJson = function () {
+        return { "uuid": this.uuid, "type": "suspend", "color": this.color };
+    };
+    return SuspendUnUCard;
 }(SpecialUnoCard_1.SpecialUnoCard));
-exports.WishUnoCard = WishUnoCard;
+exports.SuspendUnUCard = SuspendUnUCard;

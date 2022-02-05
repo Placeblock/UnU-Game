@@ -20,80 +20,107 @@ export class RoundState {
         "allowwishonwish":true,
         "startcardamount":7
     }
-    private settings$ = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
-    private players$ = new BehaviorSubject<Player[]>([]);
-    private currentplayer$ = new BehaviorSubject<Player | null>(null);
-    private inventorys$ = new BehaviorSubject<Map<string, BehaviorSubject<Inventory>>>(new Map);
-    private currentcard$ = new BehaviorSubject<UnUCard>(new NumberUnUCard(1, Color.BLUE));
-    private forcedcolor$ = new BehaviorSubject<Color | null>(null);
+    private readonly _settings = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
+    settings$ = this._settings.asObservable();
 
-    getPlayers(): Observable<Player[]> {
-        return this.players$.asObservable();
+    private _players = new BehaviorSubject<Player[]>([]);
+    players$ = this._players.asObservable();
+
+    private _currentplayer = new BehaviorSubject<Player | null>(null);
+    currentplayer$ = this._currentplayer.asObservable();
+
+    private _inventorys = new BehaviorSubject<Map<string, Inventory>>(new Map);
+    inventorys$ = this._inventorys.asObservable();
+
+    private _currentcard = new BehaviorSubject<UnUCard>(new NumberUnUCard("", 1, Color.BLUE));
+    currentcard$ = this._currentcard.asObservable();
+
+    private _forcedcolor = new BehaviorSubject<Color | null>(null);
+    forcedcolor$ = this._forcedcolor.asObservable();
+
+    private _showforcecolorselect = new BehaviorSubject<boolean>(false);
+    showforcecolorselect$ = this._showforcecolorselect.asObservable();
+
+    private _drawqueue = new BehaviorSubject<number>(0);
+    drawqueue$ = this._drawqueue.asObservable();
+
+    get drawqueue(): number {
+        return this._drawqueue.getValue();
     }
 
-    setPlayers(players: Player[]) {
-        console.log("setPlayers");
-        this.players$.next(players);
+    set drawqueue(amount: number) {
+        this._drawqueue.next(amount);
+    }
+
+    get showforcecolor(): boolean {
+        return this._showforcecolorselect.getValue();
+    }
+
+    set showforcecolor(show: boolean) {
+        this._showforcecolorselect.next(show);
+    }
+
+    get players(): Player[] {
+        return this._players.getValue();
+    }
+
+    set players(players: Player[]) {
+        this._players.next(players);
     }
 
     addPlayer(player: Player) {
-        console.log("addPlayer");
-        this.players$.next([...this.players$.getValue(), player]);
+        this.players = [...this.players, player];
     }
 
     removePlayer(player: Player) {
-        console.log("removePlayer");
-        this.players$.next(
-            this.players$.getValue().filter(value => value.uuid != player.uuid)
-        );
+        this.players = this.players.filter(value => value.uuid != player.uuid);
     }
 
-    getSettings(): Observable<RoundSettings> {
-        return this.settings$.asObservable();
+    get settings(): RoundSettings {
+        return this._settings.getValue();
     }
 
-    setSettings(settings: RoundSettings) {
-        console.log("setSettings");
-        this.settings$.next(settings);
+    set settings(settings: RoundSettings) {
+        this._settings.next(settings);
     }
 
-    setCurrentPlayer(player: Player) {
-        console.log("setCurrentPlayer");
-        this.currentplayer$.next(player);
+    get currentplayer(): Player | null {
+        return this._currentplayer.getValue();
     }
 
-    getCurrentPlayer(): Observable<Player | null> {
-        return this.currentplayer$.asObservable();
+    set currentplayer(player: Player | null) {
+        this._currentplayer.next(player);
     }
 
-    getInventory(player: Player): Observable<Inventory> | null {
-        if(!this.inventorys$.getValue().has(player.uuid)) {
-            return null;
-        }
-        console.log(this.inventorys$.getValue().get(player.uuid)?.asObservable());
-        return this.inventorys$.getValue().get(player.uuid)?.asObservable()!;
+    get inventorys(): Map<string, Inventory> {
+        return this._inventorys.getValue();
+    }
+
+    set inventorys(inventorys: Map<string, Inventory>) {
+        this._inventorys.next(inventorys);
+    }
+
+    getInventory(player: Player): Inventory | undefined {
+        return this._inventorys.getValue().get(player.uuid);
     }
 
     setInventory(player: Player, inventory: Inventory) {
-        console.log("setInventory");
-        this.inventorys$.next(this.inventorys$.getValue().set(player.uuid, new BehaviorSubject<Inventory>(inventory)));
+        this.inventorys = this.inventorys.set(player.uuid, inventory);
     }
 
-    getCurrentCard(): Observable<UnUCard> {
-        return this.currentcard$.asObservable();
+    get currentcard(): UnUCard {
+        return this._currentcard.getValue();
     }
 
-    setCurrentCard(unucard: UnUCard) {
-        console.log("setCurrentCard");
-        this.currentcard$.next(unucard);
+    set currentcard(card: UnUCard) {
+        this._currentcard.next(card);
     }
 
-    getForcedColor(): Observable<Color | null> {
-        return this.forcedcolor$.asObservable();
+    get forcedcolor(): Color | null {
+        return this._forcedcolor.value;
     }
 
-    setForcedColor(color: Color | null) {
-        console.log("setForcedColor");
-        this.forcedcolor$.next(color);
+    set forcedcolor(color: Color | null) {
+        this._forcedcolor.next(color);
     }
 }

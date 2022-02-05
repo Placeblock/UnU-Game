@@ -27,7 +27,7 @@ var OutPlayerDrawHiddenPacket = /** @class */ (function (_super) {
         return _this;
     }
     OutPlayerDrawHiddenPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON() };
+        return { "action": this.action, "player": this.player.asJSON(), "uuid": this.unoCard.getUUID() };
     };
     OutPlayerDrawHiddenPacket.prototype.getPlayer = function () {
         return this.player;

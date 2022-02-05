@@ -15,26 +15,22 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutPlayerDrawPacket = void 0;
+exports.OutDrawPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
-var OutPlayerDrawPacket = /** @class */ (function (_super) {
-    __extends(OutPlayerDrawPacket, _super);
-    function OutPlayerDrawPacket(player, unoCard) {
+var OutDrawPacket = /** @class */ (function (_super) {
+    __extends(OutDrawPacket, _super);
+    function OutDrawPacket(unoCard) {
         var _this = _super.call(this) || this;
-        _this.action = "playerDrawCard";
-        _this.player = player;
+        _this.action = "drawCard";
         _this.unoCard = unoCard;
         return _this;
     }
-    OutPlayerDrawPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON(), "unocard": this.unoCard.asJson() };
+    OutDrawPacket.prototype.asJSON = function () {
+        return { "action": this.action, "unocard": this.unoCard.asJson() };
     };
-    OutPlayerDrawPacket.prototype.getPlayer = function () {
-        return this.player;
-    };
-    OutPlayerDrawPacket.prototype.getUnoCard = function () {
+    OutDrawPacket.prototype.getUnoCard = function () {
         return this.unoCard;
     };
-    return OutPlayerDrawPacket;
+    return OutDrawPacket;
 }(OutPacket_1.OutPacket));
-exports.OutPlayerDrawPacket = OutPlayerDrawPacket;
+exports.OutDrawPacket = OutDrawPacket;

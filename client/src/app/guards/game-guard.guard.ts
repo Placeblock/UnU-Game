@@ -13,9 +13,9 @@ export class GameGuardGuard implements CanActivate {
     route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const gameid = route.paramMap.get("gameid");
     if(gameid != null) {
-      this.roomState.setAuthName(gameid);
+      this.roomState.authname = gameid;
     }
-    if (this.roomState.getNameValue() == "") {
+    if (this.roomState.authname == "") {
       this.router.navigate([""]);
       return false;
     }

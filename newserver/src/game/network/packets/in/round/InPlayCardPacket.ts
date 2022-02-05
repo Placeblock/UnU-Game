@@ -20,8 +20,9 @@ export class InPlayCardPacket extends InPacket {
     }
 
     public static getFromJSON(player: Player, json: {}): InPlayCardPacket {
-        if(!("cardid" in json)) return null;
-        return new InPlayCardPacket(player, json["cardid"]);
+        if(!("card" in json)) return null;
+        if(!("uuid" in json["card"])) return null;
+        return new InPlayCardPacket(player, json["card"]["uuid"]);
     }
 
 }

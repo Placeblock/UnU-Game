@@ -15,29 +15,30 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.WishUnoCard = void 0;
-var DrawFourUnoCard_1 = require("./DrawFourUnoCard");
+exports.InvertDirectionUnoCard = void 0;
+var UnoCard_1 = require("../UnoCard");
 var SpecialUnoCard_1 = require("./SpecialUnoCard");
-var WishUnoCard = /** @class */ (function (_super) {
-    __extends(WishUnoCard, _super);
-    function WishUnoCard() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var InvertDirectionUnoCard = /** @class */ (function (_super) {
+    __extends(InvertDirectionUnoCard, _super);
+    function InvertDirectionUnoCard(color) {
+        var _this = _super.call(this) || this;
+        _this.color = color;
+        return _this;
     }
-    WishUnoCard.prototype.getRandom = function () {
-        return new WishUnoCard();
+    InvertDirectionUnoCard.prototype.getRandom = function () {
+        return new InvertDirectionUnoCard(UnoCard_1.UnoCard.randomColor());
     };
-    WishUnoCard.prototype.isValidNextCard = function (round, card) {
-        if ("color" in card && card["color"] != round.getForcedColor())
-            return false;
-        if (card instanceof WishUnoCard && !round.getSettings().allowwishonwish)
-            return false;
-        if (card instanceof DrawFourUnoCard_1.DrawFourUnoCard && !round.getSettings().allowdraw4onwish)
+    InvertDirectionUnoCard.prototype.isValidNextCard = function (round, card) {
+        if ("color" in card && card["color"] != this.color)
             return false;
         return true;
     };
-    WishUnoCard.prototype.asJson = function () {
-        return { "uuid": this.uuid, "type": "wish" };
+    InvertDirectionUnoCard.prototype.getColor = function () {
+        return this.color;
     };
-    return WishUnoCard;
+    InvertDirectionUnoCard.prototype.asJson = function () {
+        return { "uuid": this.uuid, "type": "invert", "color": this.color };
+    };
+    return InvertDirectionUnoCard;
 }(SpecialUnoCard_1.SpecialUnoCard));
-exports.WishUnoCard = WishUnoCard;
+exports.InvertDirectionUnoCard = InvertDirectionUnoCard;

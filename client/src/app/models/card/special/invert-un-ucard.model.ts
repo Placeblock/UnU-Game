@@ -1,4 +1,3 @@
-import * as cardcolor from "../color.model";
 import {Color} from "../color.model";
 import { JSONUnUCard } from "../jsonun-ucard";
 import { SpecialUnUCard } from "./special-un-ucard.model";
@@ -7,20 +6,21 @@ export class InvertUnUCard extends SpecialUnUCard{
     protected weight: number;
     protected readonly color: Color;
 
-    constructor(color: Color) {
-        super();
+    constructor(uuid: string, color: Color) {
+        super(uuid);
         this.color = color;
-        this.weight = cardcolor.getWeight(color)+10;
+        this.weight = color.weight+11;
     }
+
     getColor(): Color {
         return this.color;
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"invert","color": this.color};
+        return {"uuid":this.uuid,"type":"invert","color": this.color.variable};
     }
 
     static fromJson(json: JSONUnUCard): InvertUnUCard {
-        return new InvertUnUCard(Color[(json["color"] as keyof typeof Color)]);
+        return new InvertUnUCard(json["uuid"], Color.fromString(json["color"]));
     }
 }

@@ -14,7 +14,7 @@ export class OutPlayerDrawHiddenPacket extends OutPacket {
     }
 
     asJSON(): {} {
-        return {"action":this.action,"player":this.player.asJSON()};
+        return {"action":this.action,"player":this.player.asJSON(),"uuid":this.unoCard.getUUID()};
     }
 
     public getPlayer(): Player {

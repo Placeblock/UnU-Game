@@ -39,7 +39,7 @@ var DrawFourUnoCard = /** @class */ (function (_super) {
         return true;
     };
     DrawFourUnoCard.prototype.asJson = function () {
-        return { "cardid": this.uuid, "type": "draw4" };
+        return { "uuid": this.uuid, "type": "draw4" };
     };
     return DrawFourUnoCard;
 }(SpecialUnoCard_1.SpecialUnoCard));

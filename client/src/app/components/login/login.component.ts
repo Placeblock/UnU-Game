@@ -17,9 +17,9 @@ import { RoomState } from 'src/app/states/room-state.service';
 export class LoginComponent {
   faHeart = faHeart
   name = new FormControl('');
-  unucard1 = new Draw4UnUCard();
-  unucard2 = new Draw2UnUCard(Color.BLUE);
-  unucard3 = new NumberUnUCard(3, Color.RED);
+  unucard1 = new Draw4UnUCard("");
+  unucard2 = new Draw2UnUCard("", Color.BLUE);
+  unucard3 = new NumberUnUCard("", 3, Color.RED);
 
   constructor(private roomState: RoomState, private websocketService: WebsocketService) {}
 
@@ -35,8 +35,8 @@ export class LoginComponent {
   }
 
   continue() {
-    if (this.roomState.getAuthNameValue() != "") {
-      this.websocketService.sendMessage('joinRoom', {"uuid":this.roomState.getAuthNameValue()});
+    if (this.roomState.authname != "") {
+      this.websocketService.sendMessage('joinRoom', {"uuid":this.roomState.authname});
       return;
     }else {
       this.websocketService.sendMessage('createRoom', {});

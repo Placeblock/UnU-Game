@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { faSortAmountDownAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
-import { Observable } from 'rxjs';
+import { faSortAmountDownAlt, faBullhorn, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { UnUCard } from 'src/app/models/card/un-ucard.model';
-import { Inventory } from 'src/app/models/inventory.model';
-import { Player } from 'src/app/models/player';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { RoomState } from 'src/app/states/room-state.service';
 import { RoundState } from 'src/app/states/round-state.service';
@@ -16,16 +13,13 @@ import { RoundState } from 'src/app/states/round-state.service';
 export class InventoryComponent {
   faSort = faSortAmountDownAlt;
   faBullhorn = faBullhorn;
+  faCheck = faCheck
 
   constructor(public roundState: RoundState, public roomState: RoomState, private webSocketService: WebsocketService) {
   }
 
-  calculateXTranslate(cardlength: number): number {
-    return  Math.min(window.innerWidth/cardlength/2,30)-cardlength*Math.min(window.innerWidth/cardlength/2, 30)/2;
-
-  }
-
   dropCard(element: HTMLElement, card: UnUCard) {
+    if(this.roundState.currentplayer?.uuid != this.roomState.me?.uuid) return;
     this.webSocketService.sendMessage("playCard", {"card":card.asJson()});
     /*if(this.gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() != this.gameService.getPlayer()) return;
     const cardstack = document.getElementById('cardstack');
@@ -42,9 +36,5 @@ export class InventoryComponent {
       this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(player)?.removeCard(card);
       this.gameService.getCurrentRoom()?.getCurrentRound()?.setCurrentCard(card);
     }, 1000)*/
-  }
-
-  sortInventory() {
-    this.roundState.getInventory
   }
 }

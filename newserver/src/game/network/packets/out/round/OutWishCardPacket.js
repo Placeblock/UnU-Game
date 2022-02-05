@@ -15,29 +15,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.InPlayCardPacket = void 0;
-var InPacket_1 = require("../InPacket");
-var InPlayCardPacket = /** @class */ (function (_super) {
-    __extends(InPlayCardPacket, _super);
-    function InPlayCardPacket(player, cardid) {
+exports.OutWishCardPacket = void 0;
+var OutPacket_1 = require("../OutPacket");
+var OutWishCardPacket = /** @class */ (function (_super) {
+    __extends(OutWishCardPacket, _super);
+    function OutWishCardPacket() {
         var _this = _super.call(this) || this;
-        _this.cardid = cardid;
-        _this.player = player;
+        _this.action = "wishCard";
         return _this;
     }
-    InPlayCardPacket.prototype.getCardID = function () {
-        return this.cardid;
+    OutWishCardPacket.prototype.asJSON = function () {
+        return { "action": this.action };
     };
-    InPlayCardPacket.prototype.getPlayer = function () {
-        return this.player;
-    };
-    InPlayCardPacket.getFromJSON = function (player, json) {
-        if (!("card" in json))
-            return null;
-        if (!("uuid" in json["card"]))
-            return null;
-        return new InPlayCardPacket(player, json["card"]["uuid"]);
-    };
-    return InPlayCardPacket;
-}(InPacket_1.InPacket));
-exports.InPlayCardPacket = InPlayCardPacket;
+    return OutWishCardPacket;
+}(OutPacket_1.OutPacket));
+exports.OutWishCardPacket = OutWishCardPacket;

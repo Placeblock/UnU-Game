@@ -7,7 +7,6 @@ import { Draw2UnUCard } from 'src/app/models/card/special/draw2-un-ucard.model';
 import { NumberUnUCard } from 'src/app/models/card/number/number-un-ucard.model';
 import { UnUCard } from 'src/app/models/card/un-ucard.model';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { Color } from 'src/app/models/card/color.model';
 
 @Component({
   selector: 'app-unocard',
@@ -40,19 +39,30 @@ export class UnocardComponent {
   @HostBinding('style.background-color') 
   public get getBackgroundColor() {
     if("color" in this.unucard) {
-      return (this.unucard as any).getColor();
+      return (this.unucard as any).getColor().colorcode;
     }else {
       return "black"
     }
   }
   @HostBinding('style.color') @Input() color = "white";
-  @Input() unucard: UnUCard = new NumberUnUCard(11, Color.BLUE);
+  @HostBinding('style.border-color')
+  public get getBorderColor() {
+    if(this.unucard instanceof WishUnUCard || this.unucard instanceof Draw4UnUCard) {
+      return this.unucard.getChosenColor().colorcode;
+    }
+    return "white";
+  }
+  @Input() unucard!: UnUCard;
 
   
   @HostBinding('@flip') @Input() side: string = 'front';
 
   flipCard() {
     this.side = "back";
+  }
+
+  ngOnInit() {
+
   }
 
 }

@@ -1,7 +1,7 @@
 <fa-icon [icon]="faSignOut" id="signout" tooltip="Leave Room" placement="right" [showDelay]="500" (click)="quitRoom()"></fa-icon>
-<ng-container *ngIf="this.players$ | async as resolved">
-    <ng-container *ngIf="this.owner$ | async as owner">
-        <ng-container *ngIf="this.me$ | async as me">
+<ng-container *ngIf="roomState.players$ | async as resolved">
+    <ng-container *ngIf="roomState.owner$ | async as owner">
+        <ng-container *ngIf="roomState.me$ | async as me">
             <div id="roomcontent">
                 <p id="playerlist-header">Players</p>
                 <app-playerlist [players]="resolved" [owner]="owner" [me]="me"></app-playerlist>
@@ -10,7 +10,7 @@
                     <div id="round-container">
                         <button id="start-button" (click)="startRound()">Runde Erstellen</button>
                         <fa-icon id="settings-toggle" [icon]="faCogs" (click)="toggleShowSettings()"></fa-icon>
-                        <div id="settings-container" *ngIf="this.isShowingSettings$ | async">
+                        <div id="settings-container" *ngIf="roomState.isShowingSettings$ | async">
                             <app-roundsettings></app-roundsettings>
                         </div>
                     </div>
@@ -18,7 +18,6 @@
             </div>
         </ng-container>
     </ng-container>
-
 </ng-container>
 
-<ng-particles [id]="'particles'" [options]="particlesOptions"></ng-particles>
+<!--<ng-particles [id]="'particles'" [options]="particlesOptions"></ng-particles>-->

@@ -18,7 +18,7 @@ export class DrawFourUnoCard extends SpecialUnoCard{
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"draw4"};
+        return {"uuid":this.uuid,"type":"draw4"};
     }
 
 }

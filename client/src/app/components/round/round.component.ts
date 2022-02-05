@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { UnUCard } from 'src/app/models/card/un-ucard.model';
+import { Color } from 'src/app/models/card/color.model';
+import { NumberUnUCard } from 'src/app/models/card/number/number-un-ucard.model';
+import { WebsocketService } from 'src/app/services/websocket.service';
 import { RoundState } from 'src/app/states/round-state.service';
 
 @Component({
@@ -9,13 +10,22 @@ import { RoundState } from 'src/app/states/round-state.service';
   styleUrls: ['./round.component.scss']
 })
 export class RoundComponent {
-  currentcard$: Observable<UnUCard>;
+  stackCard = new NumberUnUCard("", 0, Color.RED);
+  Color = Color;
 
-  constructor(roundState: RoundState) {
-    this.currentcard$ = roundState.getCurrentCard();
-  }
+  constructor(public roundState: RoundState, private websocketService: WebsocketService) {}
 
   getRandom(): number {
     return Math.random()*30-15
+  }
+
+  drawCard() {
+    console.log("drawcard");
+    this.websocketService.sendMessage("drawCard", {});
+  }
+
+  forceColorSelect(color: Color) {
+    this.websocketService.sendMessage("wishColor", {"color":color.variable});
+    this.roundState.showforcecolor = false;
   }
 }

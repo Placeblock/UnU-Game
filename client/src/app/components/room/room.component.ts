@@ -1,9 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { faCogs, faMedal, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Observable } from 'rxjs';
-import { Player } from 'src/app/models/player';
 import { WebsocketService } from 'src/app/services/websocket.service';
 import { RoomState } from 'src/app/states/room-state.service';
 
@@ -13,10 +10,6 @@ import { RoomState } from 'src/app/states/room-state.service';
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent {
-  players$: Observable<Player[]>;
-  owner$: Observable<Player | null>;
-  me$: Observable<Player>;
-  isShowingSettings$: Observable<boolean>;
 
   faEthereum = faEthereum;
   faMedal = faMedal;
@@ -24,15 +17,11 @@ export class RoomComponent {
   faUser = faUser;
   faCogs = faCogs;
 
-  constructor(private roomState: RoomState, private webSocketService: WebsocketService) {
-    this.players$ = roomState.getPlayers();
-    this.owner$ = roomState.getOwner();
-    this.isShowingSettings$ = roomState.isShowingSettings();
-    this.me$ = roomState.getMe();
-  }
+  constructor(public roomState: RoomState, public webSocketService: WebsocketService) {}
+
 
   toggleShowSettings() {
-    this.roomState.toggleShowSettings();
+    this.roomState.isShowingSettings = !this.roomState.isShowingSettings;
   }
 
   quitRoom() {

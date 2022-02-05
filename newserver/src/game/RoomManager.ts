@@ -10,8 +10,6 @@ export class RoomManager {
             return;
         }
         this.registeredRooms[room.getName()] = room;
-        console.log("registered room:");
-        console.log(room.getName());
     }
 
     static unregisterRoom(room: Room) {
@@ -19,7 +17,6 @@ export class RoomManager {
             console.warn("Tried to unregister non existing Room!");
             return;
         }
-        console.log("unregistered Room");
         delete this.registeredRooms[room.getName()];
     }
 

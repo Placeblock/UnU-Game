@@ -17,7 +17,7 @@ export class WishUnoCard extends SpecialUnoCard{
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"wish"};
+        return {"uuid":this.uuid,"type":"wish"};
     }
     
 }

@@ -27,7 +27,7 @@ export class DrawTwoUnoCard extends SpecialUnoCard implements Colorable {
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"draw2","color": this.color};
+        return {"uuid":this.uuid,"type":"draw2","color": this.color};
     }
     
 }

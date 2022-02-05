@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Player } from 'src/app/models/player';
 import { RoomState } from 'src/app/states/room-state.service';
@@ -9,17 +9,13 @@ import { RoundState } from 'src/app/states/round-state.service';
   templateUrl: './user-infos.component.html',
   styleUrls: ['./user-infos.component.scss']
 })
-export class UserInfosComponent implements OnChanges {
+export class UserInfosComponent {
   players$: Observable<Player[]>;
-  me$: Observable<Player>;
+  me$: Observable<Player | null>;
 
   constructor(private roundState: RoundState, private roomState: RoomState) {
-    this.players$ = this.roundState.getPlayers();
-    this.me$ = this.roomState.getMe();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
+    this.players$ = this.roundState.players$;
+    this.me$ = this.roomState.me$;
   }
 
 }

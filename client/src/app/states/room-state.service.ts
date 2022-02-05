@@ -8,105 +8,92 @@ import { RoundState } from "./round-state.service";
     providedIn: 'root'
 })
 export class RoomState {
-    private players$ = new BehaviorSubject<Player[]>([]);
-    private me$ = new BehaviorSubject<Player>({"name":"undefined","uuid":"undefined"});
-    private owner$ = new BehaviorSubject<Player | null>(null);
-    private name$ = new BehaviorSubject<string>("");
-    private authName$ = new BehaviorSubject<string>("");
-    private isShowingSettings$ = new BehaviorSubject<boolean>(false);
-    private settings$ = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
-    private isRoundRunning$ = new BehaviorSubject<boolean>(false);
+    private _players = new BehaviorSubject<Player[]>([]);
+    players$ = this._players.asObservable();
+    private _me = new BehaviorSubject<Player | null>(null);
+    me$ = this._me.asObservable();
+    private _owner = new BehaviorSubject<Player | null>(null);
+    owner$ = this._owner.asObservable();
+    private _name = new BehaviorSubject<string>("");
+    name$ = this._name.asObservable();
+    private _authName = new BehaviorSubject<string>("");
+    authName$ = this._authName.asObservable();
+    private _isShowingSettings = new BehaviorSubject<boolean>(false);
+    isShowingSettings$ = this._isShowingSettings.asObservable();
+    private _settings = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
+    settings$ = this._settings.asObservable();
+    private _isRoundRunning = new BehaviorSubject<boolean>(false);
+    isRoundRunning$ = this._isRoundRunning.asObservable();
 
-    getPlayers(): Observable<Player[]> {
-        return this.players$.asObservable();
+    get players(): Player[] {
+        return this._players.getValue();
     }
 
-    setPlayers(players: Player[]) {
-        console.log("setPlayers");
-        this.players$.next(players);
+    set players(players: Player[]) {
+        this._players.next(players);   
     }
 
-    getOwner(): Observable<Player | null> {
-        return this.owner$.asObservable();
+    get owner(): Player | null {
+        return this._owner.getValue();
     }
 
-    setOwner(player: Player) {
-        console.log("setOwner");
-        this.owner$.next(player);
+    set owner(player: Player | null) {
+        this._owner.next(player);
     }
 
-    getMe(): Observable<Player> {
-        return this.me$.asObservable();
+    get me(): Player | null {
+        return this._me.getValue();
     }
 
-    setMe(player: Player) {
-        console.log("setMe");
-        this.me$.next(player);
+    set me(player: Player | null) {
+        this._me.next(player);
     }
 
     addPlayer(player: Player) {
-        this.players$.next([...this.players$.getValue(), player])
+        this.players = [...this.players, player];
     }
 
     removePlayer(player: Player) {
-        this.players$.next(this.players$.getValue().filter(p => p.uuid != player.uuid));
+        this.players = this.players.filter(value => value.uuid != player.uuid);
     }
 
-    getName(): Observable<string> {
-        return this.name$.asObservable();
+    get name(): string {
+        return this._name.getValue();
     }
 
-    getNameValue(): string {
-        return this.name$.getValue();
+    set name(name: string) {
+        this._name.next(name);
     }
 
-    setName(name: string) {
-        console.log("setName");
-        this.name$.next(name);
-    }
-    
-    getAuthName(): Observable<string> {
-        return this.authName$;
+    get authname(): string {
+        return this._authName.getValue();
     }
 
-    setAuthName(name: string) {
-        console.log("setAuthname");
-        this.authName$.next(name);
+    set authname(name: string) {
+        this._authName.next(name);
     }
 
-    getAuthNameValue(): string {
-        return this.authName$.getValue();
+    get settings(): RoundSettings {
+        return this._settings.getValue();
     }
 
-    getSettings(): Observable<RoundSettings> {
-        return this.settings$.asObservable();
+    set settings(settings: RoundSettings) {
+        this._settings.next(settings);
     }
 
-    setSettings(settings: RoundSettings) {
-        console.log("setSettings");
-        this.settings$.next(settings);
+    get isShowingSettings(): boolean {
+        return this._isShowingSettings.getValue();
     }
 
-    isShowingSettings(): Observable<boolean> {
-        return this.isShowingSettings$;
+    set isShowingSettings(showing: boolean) {
+        this._isShowingSettings.next(showing);
     }
 
-    setShowSettings(show: boolean) {
-        console.log("setShowSettings");
-        this.isShowingSettings$.next(show);
+    get isRoundRunning(): boolean {
+        return this._isRoundRunning.getValue();
     }
 
-    toggleShowSettings() {
-        console.log("toggleShowSettings");
-        this.isShowingSettings$.next(!this.isShowingSettings$.getValue());
-    }
-
-    isRoundRunning(): Observable<boolean> {
-        return this.isRoundRunning$.asObservable();
-    }
-
-    setRoundRunning(running: boolean) {
-        console.log("setRoundRunning");
-        this.isRoundRunning$.next(running);
+    set roundRunning(running: boolean) {
+        this._isRoundRunning.next(running);
     }
 }
