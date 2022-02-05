@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { faEthereum } from '@fortawesome/free-brands-svg-icons';
 import { faCogs, faMedal, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
-import { RoomFacade } from 'src/app/facades/room-facade';
 import { Observable } from 'rxjs';
-import { Player } from 'src/app/models/player.model';
-import { RoomState } from 'src/app/states/room-state';
+import { Player } from 'src/app/models/player';
+import { WebsocketService } from 'src/app/services/websocket.service';
+import { RoomState } from 'src/app/states/room-state.service';
 
 @Component({
   selector: 'app-room',
@@ -14,7 +15,7 @@ import { RoomState } from 'src/app/states/room-state';
 export class RoomComponent {
   players$: Observable<Player[]>;
   owner$: Observable<Player | null>;
-  me$: Observable<Player | null>;
+  me$: Observable<Player>;
   isShowingSettings$: Observable<boolean>;
 
   faEthereum = faEthereum;
@@ -23,14 +24,24 @@ export class RoomComponent {
   faUser = faUser;
   faCogs = faCogs;
 
-  constructor(private roomState: RoomState) {
+  constructor(private roomState: RoomState, private webSocketService: WebsocketService) {
     this.players$ = roomState.getPlayers();
     this.owner$ = roomState.getOwner();
     this.isShowingSettings$ = roomState.isShowingSettings();
+    this.me$ = roomState.getMe();
   }
 
   toggleShowSettings() {
     this.roomState.toggleShowSettings();
+  }
+
+  quitRoom() {
+    this.webSocketService.sendMessage("quitRoom", {});
+    //TODO: RECEIVE QUIT MESSAGE FROM SERVER AND ROUTE TO LOGIN AND REMOVE ROOM DATA
+  }
+
+  startRound() {
+    this.webSocketService.sendMessage("startRound", {});
   }
 
 

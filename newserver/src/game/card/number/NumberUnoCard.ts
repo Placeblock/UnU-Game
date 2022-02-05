@@ -20,6 +20,10 @@ export class NumberUnoCard extends UnoCard implements Colorable {
         return this.number;
     }
 
+    getRandom(): UnoCard {
+        return new NumberUnoCard(UnoCard.randomColor(), Math.floor(Math.random() * 9) + 0)
+    }
+
     isValidNextCard(round: Round, card: UnoCard): boolean {
         if("color" in card && this.color != card["color"]) return false;
         if(card instanceof NumberUnoCard && card.number != this.number) return false;

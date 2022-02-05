@@ -2,9 +2,8 @@ import { Color } from "../color.model";
 import * as cardcolor from "../color.model";
 import { Colorable } from "../colorable.model";
 import { SpecialUnUCard } from "./special-un-ucard.model";
-import { Round } from "../../round.model";
 import { UnUCard } from "../un-ucard.model";
-import { Draw4UnUCard } from "./draw4-un-ucard.model";
+import { JSONUnUCard } from "../jsonun-ucard";
 
 export class SuspendUnUCard extends SpecialUnUCard implements Colorable {
     protected weight: number;
@@ -16,17 +15,16 @@ export class SuspendUnUCard extends SpecialUnUCard implements Colorable {
         this.weight = cardcolor.getWeight(color)+9;
     }
 
-    isValidNextCard(round: Round, card: UnUCard) {
-        if("color" in card && (card as any)["color"] != this.color) return false;
-        return true;
-    }
-
     getColor() {
         return this.color;
     }
 
+    static fromJson(json: JSONUnUCard): SuspendUnUCard {
+        return new SuspendUnUCard(Color[(json["color"] as keyof typeof Color)]);
+    }
+
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"draw2","color": this.color};
+        return {"cardid":this.uuid,"type":"suspend","color": this.color};
     }
     
 }

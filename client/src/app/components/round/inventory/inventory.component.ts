@@ -1,7 +1,12 @@
 import { Component } from '@angular/core';
 import { faSortAmountDownAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
-import { GameService } from 'src/app/services/game.service';
+import { Observable } from 'rxjs';
 import { UnUCard } from 'src/app/models/card/un-ucard.model';
+import { Inventory } from 'src/app/models/inventory.model';
+import { Player } from 'src/app/models/player';
+import { WebsocketService } from 'src/app/services/websocket.service';
+import { RoomState } from 'src/app/states/room-state.service';
+import { RoundState } from 'src/app/states/round-state.service';
 
 @Component({
   selector: 'app-inventory',
@@ -12,31 +17,17 @@ export class InventoryComponent {
   faSort = faSortAmountDownAlt;
   faBullhorn = faBullhorn;
 
-  constructor(public gameService: GameService) { }
-
-  calculateXTranslate(): number {
-    const player = this.gameService.getPlayer();
-    if(player != undefined) {
-      const cardlength = this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(player)?.getCards().length;
-      if(cardlength == undefined) return 0;
-      return  Math.min(window.innerWidth/cardlength/2,30)-cardlength*Math.min(window.innerWidth/cardlength/2, 30)/2;
-    }
-    return 0;
+  constructor(public roundState: RoundState, public roomState: RoomState, private webSocketService: WebsocketService) {
   }
 
-  getRotation(index: number): number {
-    const player = this.gameService.getPlayer();
-    if(player == undefined) return 0;
-    const cardlength = this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(player)?.getCards().length;
-    if(cardlength == undefined) return 0;
-    const cardscount = cardlength;
-    const betweencardsangle = 60/cardscount;
-    const absoluteindexangle = (index+0.5)*betweencardsangle;
-    return (absoluteindexangle - 30)
+  calculateXTranslate(cardlength: number): number {
+    return  Math.min(window.innerWidth/cardlength/2,30)-cardlength*Math.min(window.innerWidth/cardlength/2, 30)/2;
+
   }
 
   dropCard(element: HTMLElement, card: UnUCard) {
-    if(this.gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() != this.gameService.getPlayer()) return;
+    this.webSocketService.sendMessage("playCard", {"card":card.asJson()});
+    /*if(this.gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() != this.gameService.getPlayer()) return;
     const cardstack = document.getElementById('cardstack');
     if(cardstack == null) return
     const newx = cardstack.getBoundingClientRect().left;
@@ -50,6 +41,10 @@ export class InventoryComponent {
       if(player == undefined) return;
       this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(player)?.removeCard(card);
       this.gameService.getCurrentRoom()?.getCurrentRound()?.setCurrentCard(card);
-    }, 1000)
+    }, 1000)*/
+  }
+
+  sortInventory() {
+    this.roundState.getInventory
   }
 }

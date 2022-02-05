@@ -1,0 +1,2 @@
+<app-room *ngIf="!(this.roundRunning$ | async)"></app-room>
+<app-round *ngIf="this.roundRunning$ | async"></app-round>

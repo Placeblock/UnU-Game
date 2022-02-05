@@ -1,16 +1,17 @@
 "use strict";
 exports.__esModule = true;
 exports.Round = void 0;
+var NumberUnoCard_1 = require("./card/number/NumberUnoCard");
 var DrawFourUnoCard_1 = require("./card/special/DrawFourUnoCard");
 var WishUnoCard_1 = require("./card/special/WishUnoCard");
-var CardStack_1 = require("./CardStack");
+var UnoCard_1 = require("./card/UnoCard");
 var Inventory_1 = require("./Inventory");
 var OutCurrentPlayerPacket_1 = require("./network/packets/out/round/OutCurrentPlayerPacket");
 var OutForcedColorPacket_1 = require("./network/packets/out/round/OutForcedColorPacket");
 var OutInventoryDataPacket_1 = require("./network/packets/out/round/OutInventoryDataPacket");
 var OutPlayCardInvalidPacket_1 = require("./network/packets/out/round/OutPlayCardInvalidPacket");
-var OutPlayerCardAmountPacket_1 = require("./network/packets/out/round/OutPlayerCardAmountPacket");
 var OutPlayerDrawHiddenPacket_1 = require("./network/packets/out/round/OutPlayerDrawHiddenPacket");
+var OutPlayerDrawPacket_1 = require("./network/packets/out/round/OutPlayerDrawPacket");
 var OutPlayerLeftRoundPacket_1 = require("./network/packets/out/round/OutPlayerLeftRoundPacket");
 var OutPlayerPlayCardPacket_1 = require("./network/packets/out/round/OutPlayerPlayCardPacket");
 var OutWishCardInvalidPacket_1 = require("./network/packets/out/round/OutWishCardInvalidPacket");
@@ -22,20 +23,20 @@ var Round = /** @class */ (function () {
         this.leaderboard = [];
         this.room = room;
         this.players = players;
-        this.currentplayer = players[Math.random() * players.length];
+        this.currentplayer = players[Math.floor(Math.random() * players.length)];
         this.settings = settings;
         for (var _i = 0, _a = this.players; _i < _a.length; _i++) {
             var player = _a[_i];
             var cardjsonlist = [];
             this.inventorys.set(player, new Inventory_1.Inventory());
             for (var i = 0; i < this.settings.startcardamount; i++) {
-                var card = CardStack_1.CardStack.getRandom();
+                var card = UnoCard_1.UnoCard.getRandomCard();
                 cardjsonlist.push(card.asJson());
                 this.inventorys.get(player).addCard(card);
             }
             player.send(new OutInventoryDataPacket_1.OutInventoryDataPacket(player, this.inventorys.get(player)));
-            this.room.sendToAllPlayers(new OutPlayerCardAmountPacket_1.OutPlayerCardAmountPacket(player, this.inventorys.get(player).size()), [player]);
         }
+        this.currentcard = new NumberUnoCard_1.NumberUnoCard(UnoCard_1.UnoCard.randomColor(), 1);
     }
     Round.prototype.getForcedColor = function () {
         return this.forcedcolor;
@@ -75,9 +76,10 @@ var Round = /** @class */ (function () {
         }
     };
     Round.prototype.drawCard = function () {
-        var randomcard = CardStack_1.CardStack.getRandom();
+        var randomcard = UnoCard_1.UnoCard.getRandomCard();
         this.getPlayerInventory(this.currentplayer).addCard(randomcard);
         this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket_1.OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
+        this.currentplayer.send(new OutPlayerDrawPacket_1.OutPlayerDrawPacket(this.currentplayer, randomcard));
     };
     Round.prototype.removePlayer = function (player) {
         this.inventorys["delete"](player);
@@ -194,9 +196,9 @@ var Round = /** @class */ (function () {
             var player = _a[_i];
             jsonplayers.push(player.getUUID());
         }
-        var jsoninventorys = {};
+        var jsoninventorys = [];
         this.inventorys.forEach(function (value, key) {
-            jsoninventorys[key.getUUID()] = value.asJSON();
+            jsoninventorys.push({ "player": key.asJSON(), "cards": value.getCards().length });
         });
         var jsonleaderboard = [];
         for (var _b = 0, _c = this.leaderboard; _b < _c.length; _b++) {

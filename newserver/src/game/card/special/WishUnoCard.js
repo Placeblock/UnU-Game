@@ -23,6 +23,9 @@ var WishUnoCard = /** @class */ (function (_super) {
     function WishUnoCard() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    WishUnoCard.prototype.getRandom = function () {
+        return new WishUnoCard();
+    };
     WishUnoCard.prototype.isValidNextCard = function (round, card) {
         if ("color" in card && card["color"] != round.getForcedColor())
             return false;
@@ -33,7 +36,7 @@ var WishUnoCard = /** @class */ (function (_super) {
         return true;
     };
     WishUnoCard.prototype.asJson = function () {
-        return { "cardid": this.uuid, "type": "special" };
+        return { "cardid": this.uuid, "type": "wish" };
     };
     return WishUnoCard;
 }(SpecialUnoCard_1.SpecialUnoCard));

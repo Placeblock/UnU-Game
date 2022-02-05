@@ -1,7 +1,7 @@
+import { NumberUnoCard } from "./card/number/NumberUnoCard";
 import { DrawFourUnoCard } from "./card/special/DrawFourUnoCard";
 import { WishUnoCard } from "./card/special/WishUnoCard";
 import { UnoCard } from "./card/UnoCard";
-import { CardStack } from "./CardStack";
 import { Inventory } from "./Inventory";
 import { InDrawCardPacket } from "./network/packets/in/round/InDrawCardPacket";
 import { InPlayCardPacket } from "./network/packets/in/round/InPlayCardPacket";
@@ -10,8 +10,8 @@ import { OutCurrentPlayerPacket } from "./network/packets/out/round/OutCurrentPl
 import { OutForcedColorPacket } from "./network/packets/out/round/OutForcedColorPacket";
 import { OutInventoryDataPacket } from "./network/packets/out/round/OutInventoryDataPacket";
 import { OutPlayCardInvalidPacket } from "./network/packets/out/round/OutPlayCardInvalidPacket";
-import { OutPlayerCardAmountPacket } from "./network/packets/out/round/OutPlayerCardAmountPacket";
 import { OutPlayerDrawHiddenPacket } from "./network/packets/out/round/OutPlayerDrawHiddenPacket";
+import { OutPlayerDrawPacket } from "./network/packets/out/round/OutPlayerDrawPacket";
 import { OutPlayerLeftRoundPacket } from "./network/packets/out/round/OutPlayerLeftRoundPacket";
 import { OutPlayerPlayCardPacket } from "./network/packets/out/round/OutPlayerPlayCardPacket";
 import { OutWishCardInvalidPacket } from "./network/packets/out/round/OutWishCardInvalidPacket";
@@ -33,19 +33,19 @@ export class Round {
     constructor(players: Player[], settings: RoundSettings, room: Room) {
         this.room = room;
         this.players = players;
-        this.currentplayer = players[Math.random()*players.length];
+        this.currentplayer = players[Math.floor(Math.random()*players.length)];
         this.settings = settings;
-        for (const player of this.players) {
+        for (var player of this.players) {
             const cardjsonlist = [];
             this.inventorys.set(player, new Inventory());
             for(var i: number = 0; i < this.settings.startcardamount; i++) {
-                var card: UnoCard = CardStack.getRandom();
+                var card: UnoCard = UnoCard.getRandomCard();
                 cardjsonlist.push(card.asJson());
                 this.inventorys.get(player).addCard(card);
             }
             player.send(new OutInventoryDataPacket(player, this.inventorys.get(player)));
-            this.room.sendToAllPlayers(new OutPlayerCardAmountPacket(player, this.inventorys.get(player).size()), [player]);
         }
+        this.currentcard = new NumberUnoCard(UnoCard.randomColor(), 1);
     }
 
     getForcedColor(): string {
@@ -94,9 +94,10 @@ export class Round {
     }
 
     drawCard() {
-        const randomcard = CardStack.getRandom();
+        const randomcard = UnoCard.getRandomCard();
         this.getPlayerInventory(this.currentplayer).addCard(randomcard);
         this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
+        this.currentplayer.send(new OutPlayerDrawPacket(this.currentplayer, randomcard));
     }
 
     removePlayer(player: Player) {
@@ -217,9 +218,9 @@ export class Round {
         for(let player of this.players) {
             jsonplayers.push(player.getUUID());
         }
-        const jsoninventorys = {};
+        const jsoninventorys = [];
         this.inventorys.forEach((value, key) => {
-            jsoninventorys[key.getUUID()] = value.asJSON();
+            jsoninventorys.push({"player":key.asJSON(), "cards":value.getCards().length});
         })
         const jsonleaderboard = [];
         for(let player of this.leaderboard) {

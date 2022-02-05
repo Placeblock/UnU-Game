@@ -1,0 +1,33 @@
+:host {
+    border-radius: 10px;
+    background-color: rgb(87, 87, 255);
+    padding: 10px 15px 10px 15px;
+    width: 100%;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0px 0px 5px black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.playeritem-section {
+    display: flex;
+    gap: 5px;
+}
+
+
+#medal-1 {
+    color: gold;
+}
+
+#medal-2 {
+    color: silver;
+}
+
+#medal-3 {
+    color: rgb(206, 92, 48);
+}
+
+#owner-tag {
+    color: rgb(255, 153, 0);
+}

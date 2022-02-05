@@ -1,10 +1,12 @@
 <p>{{this.player["name"]}}</p>
 <div class="cards">
-    <div class="card-container" [ngStyle]="
-    {rotate: getRotation(index) + 'deg',
-    'scale':gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() == this.player? '0.8' : '0.6',
-    'transform':gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.player)?.getHoveredCard() == card ? 'translateY(-30px)' : ''}"
-    *ngFor="let card of gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.player)?.getCards(); let index=index">
-        <app-unocard [side]="'back'"></app-unocard>
-    </div>
+    <ng-container *ngIf="this.roundState.getInventory(this.player) | async as inventory">
+        <div class="card-container" [ngStyle]="
+        {rotate: inventory.calculateRotation(index) + 'deg',
+        'scale':(this.roundState.getCurrentPlayer() | async) == this.player? '0.8' : '0.6',
+        'transform':inventory.getHoveredCard() == card ? 'translateY(-30px)' : ''}"
+        *ngFor="let card of (inventory.getCards() | async); let index=index">
+            <app-unocard [side]="'back'"></app-unocard>
+        </div>
+    </ng-container>
 </div>

@@ -13,15 +13,15 @@ export class OutInventoryDataPacket extends OutPacket {
         this.inventory = inventory;
     }
 
-    asJSON(): {} {
-        return {"action":this.action,"player":this.player.asJSON(),"inventory":this.inventory.asJSON()};
+    public getInventory(): Inventory {
+        return this.inventory;
     }
 
     public getPlayer(): Player {
         return this.player;
     }
 
-    public getInventory(): Inventory {
-        return this.inventory;
+    asJSON(): {} {
+        return {"action":this.action,"inventory":this.inventory.asJSON(),"player":this.player.asJSON()};
     }
 }

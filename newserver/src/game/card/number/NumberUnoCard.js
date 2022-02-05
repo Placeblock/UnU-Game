@@ -15,33 +15,35 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.DrawTwoUnoCard = void 0;
+exports.NumberUnoCard = void 0;
 var UnoCard_1 = require("../UnoCard");
-var DrawFourUnoCard_1 = require("./DrawFourUnoCard");
-var SpecialUnoCard_1 = require("./SpecialUnoCard");
-var DrawTwoUnoCard = /** @class */ (function (_super) {
-    __extends(DrawTwoUnoCard, _super);
-    function DrawTwoUnoCard(color) {
+var NumberUnoCard = /** @class */ (function (_super) {
+    __extends(NumberUnoCard, _super);
+    function NumberUnoCard(color, number) {
         var _this = _super.call(this) || this;
         _this.color = color;
+        _this.number = number;
         return _this;
     }
-    DrawTwoUnoCard.prototype.getRandom = function () {
-        return new DrawTwoUnoCard(UnoCard_1.UnoCard.randomColor());
+    NumberUnoCard.prototype.getColor = function () {
+        return this.color;
     };
-    DrawTwoUnoCard.prototype.isValidNextCard = function (round, card) {
-        if (card instanceof DrawFourUnoCard_1.DrawFourUnoCard && !round.getSettings().allowdraw2ondraw4)
+    NumberUnoCard.prototype.getNumber = function () {
+        return this.number;
+    };
+    NumberUnoCard.prototype.getRandom = function () {
+        return new NumberUnoCard(UnoCard_1.UnoCard.randomColor(), Math.floor(Math.random() * 9) + 0);
+    };
+    NumberUnoCard.prototype.isValidNextCard = function (round, card) {
+        if ("color" in card && this.color != card["color"])
             return false;
-        if ("color" in card && card["color"] != this.color)
+        if (card instanceof NumberUnoCard && card.number != this.number)
             return false;
         return true;
     };
-    DrawTwoUnoCard.prototype.getColor = function () {
-        return this.color;
+    NumberUnoCard.prototype.asJson = function () {
+        return { "cardid": this.uuid, "type": "number", "color": this.color, "number": this.number };
     };
-    DrawTwoUnoCard.prototype.asJson = function () {
-        return { "cardid": this.uuid, "type": "draw2", "color": this.color };
-    };
-    return DrawTwoUnoCard;
-}(SpecialUnoCard_1.SpecialUnoCard));
-exports.DrawTwoUnoCard = DrawTwoUnoCard;
+    return NumberUnoCard;
+}(UnoCard_1.UnoCard));
+exports.NumberUnoCard = NumberUnoCard;

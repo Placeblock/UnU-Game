@@ -26,14 +26,14 @@ var OutInventoryDataPacket = /** @class */ (function (_super) {
         _this.inventory = inventory;
         return _this;
     }
-    OutInventoryDataPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON(), "inventory": this.inventory.asJSON() };
+    OutInventoryDataPacket.prototype.getInventory = function () {
+        return this.inventory;
     };
     OutInventoryDataPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    OutInventoryDataPacket.prototype.getInventory = function () {
-        return this.inventory;
+    OutInventoryDataPacket.prototype.asJSON = function () {
+        return { "action": this.action, "inventory": this.inventory.asJSON(), "player": this.player.asJSON() };
     };
     return OutInventoryDataPacket;
 }(OutPacket_1.OutPacket));

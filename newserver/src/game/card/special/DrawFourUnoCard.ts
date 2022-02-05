@@ -5,6 +5,9 @@ import { SpecialUnoCard } from "./SpecialUnoCard";
 import { WishUnoCard } from "./WishUnoCard";
 
 export class DrawFourUnoCard extends SpecialUnoCard{
+    getRandom(): UnoCard {
+        return new DrawFourUnoCard();
+    }
 
     isValidNextCard(round: Round, card: UnoCard) {
         if("color" in card && card["color"] != round.getForcedColor()) return false;

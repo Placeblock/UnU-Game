@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { GameService } from '../services/game.service';
+import { RoomState } from '../states/room-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameGuardGuard implements CanActivate {
-  constructor(private gameService: GameService, private router: Router) {}
+  constructor(private roomState: RoomState, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const gameid = route.paramMap.get("gameid");
     if(gameid != null) {
-      this.gameService.setAuthGameName(gameid);
+      this.roomState.setAuthName(gameid);
     }
-    if (this.gameService.getCurrentRoom() == undefined) {
+    if (this.roomState.getNameValue() == "") {
       this.router.navigate([""]);
       return false;
     }

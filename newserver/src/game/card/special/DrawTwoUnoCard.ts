@@ -7,6 +7,15 @@ import { SpecialUnoCard } from "./SpecialUnoCard";
 export class DrawTwoUnoCard extends SpecialUnoCard implements Colorable {
     protected readonly color: string;
 
+    constructor(color: string) {
+        super();
+        this.color = color;
+    }
+
+    getRandom(): UnoCard {
+        return new DrawTwoUnoCard(UnoCard.randomColor());
+    }
+
     isValidNextCard(round: Round, card: UnoCard) {
         if(card instanceof DrawFourUnoCard && !round.getSettings().allowdraw2ondraw4) return false;
         if("color" in card && card["color"] != this.color) return false;

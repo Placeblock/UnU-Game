@@ -62,6 +62,7 @@ var Player = /** @class */ (function () {
                 var room = RoomManager_1.RoomManager.getRoom(inJoinRoomPacket.getName());
                 if (room == undefined) {
                     this.send(new OutInvalidJoinRoom_1.OutInvalidJoinRoom(inJoinRoomPacket.getName(), "This room doesn't Exist"));
+                    return;
                 }
                 if (room.getPlayers().includes(this)) {
                     this.send(new OutInvalidJoinRoom_1.OutInvalidJoinRoom(room.getName(), "You are already in this Room!"));
@@ -99,7 +100,7 @@ var Player = /** @class */ (function () {
                     return;
                 if (this.currentroom == undefined)
                     return;
-                if (this.currentroom.getCurrentRound() == undefined)
+                if (this.currentroom.getCurrentRound() != undefined)
                     return;
                 this.currentroom.receiveStartRound(inStartRoundPacket);
                 break;

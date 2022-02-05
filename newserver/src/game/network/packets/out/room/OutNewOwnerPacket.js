@@ -26,7 +26,7 @@ var OutNewOwnerPacket = /** @class */ (function (_super) {
         return _this;
     }
     OutNewOwnerPacket.prototype.asJSON = function () {
-        return { "action": this.action, "uuid": this.player.getUUID() };
+        return { "action": this.action, "player": this.player.asJSON() };
     };
     OutNewOwnerPacket.prototype.getPlayer = function () {
         return this.player;

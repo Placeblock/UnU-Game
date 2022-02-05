@@ -1,0 +1,5 @@
+<app-user-infos></app-user-infos>
+<ng-container *ngIf="this.currentcard$ | async as resolved">
+    <app-unocard [unucard]="resolved"></app-unocard>
+</ng-container>
+<app-inventory></app-inventory>

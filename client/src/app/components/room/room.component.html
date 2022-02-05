@@ -1,16 +1,24 @@
-<fa-icon [icon]="faSignOut" id="signout" tooltip="Leave Room" placement="right" [showDelay]="500"></fa-icon>
+<fa-icon [icon]="faSignOut" id="signout" tooltip="Leave Room" placement="right" [showDelay]="500" (click)="quitRoom()"></fa-icon>
 <ng-container *ngIf="this.players$ | async as resolved">
-    <app-playerlist [players]="resolved"></app-playerlist>
-    <ng-container *ngIf="resolved.length >= 2 && (this.me$ | async) == (this.owner$ | async)">
-        <hr>
-        <div id="round-creation">
-            <button id="create-button">Runde Erstellen</button>
-            <fa-icon id="create-settings" [icon]="faCogs" (click)="toggleShowSettings()"></fa-icon>
-            <div id="create-container" *ngIf="this.isShowingSettings$">
-                <app-createround></app-createround>
+    <ng-container *ngIf="this.owner$ | async as owner">
+        <ng-container *ngIf="this.me$ | async as me">
+            <div id="roomcontent">
+                <p id="playerlist-header">Players</p>
+                <app-playerlist [players]="resolved" [owner]="owner" [me]="me"></app-playerlist>
+                <ng-container *ngIf="resolved.length >= 2 && me.uuid == owner.uuid">
+                    <hr>
+                    <div id="round-container">
+                        <button id="start-button" (click)="startRound()">Runde Erstellen</button>
+                        <fa-icon id="settings-toggle" [icon]="faCogs" (click)="toggleShowSettings()"></fa-icon>
+                        <div id="settings-container" *ngIf="this.isShowingSettings$ | async">
+                            <app-roundsettings></app-roundsettings>
+                        </div>
+                    </div>
+                </ng-container>
             </div>
-        </div>
+        </ng-container>
     </ng-container>
+
 </ng-container>
 
 <ng-particles [id]="'particles'" [options]="particlesOptions"></ng-particles>

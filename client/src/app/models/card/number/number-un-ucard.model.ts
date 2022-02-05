@@ -1,7 +1,7 @@
-import { Round } from "../../round.model";
 import { Color } from "../color.model";
 import * as cardcolor from "../color.model";
 import { Colorable } from "../colorable.model";
+import { JSONUnUCard } from "../jsonun-ucard";
 import { UnUCard } from "../un-ucard.model";
 
 export class NumberUnUCard extends UnUCard implements Colorable {
@@ -16,18 +16,16 @@ export class NumberUnUCard extends UnUCard implements Colorable {
         this.weight = cardcolor.getWeight(color)+number;
     }
 
+    static fromJson(json: JSONUnUCard): NumberUnUCard {
+        return new NumberUnUCard(json["number"], Color[(json["color"] as keyof typeof Color)])
+    }
+
     getColor(): Color {
         return this.color;
     }
 
     getNumber(): number {
         return this.number;
-    }
-
-    isValidNextCard(round: Round, card: UnUCard): boolean {
-        if("color" in card && this.color != (card as any)["color"]) return false;
-        if(card instanceof NumberUnUCard && card.number != this.number) return false;
-        return true;
     }
 
     asJson(): {} {

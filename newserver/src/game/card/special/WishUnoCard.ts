@@ -5,6 +5,10 @@ import { SpecialUnoCard } from "./SpecialUnoCard";
 
 export class WishUnoCard extends SpecialUnoCard{
 
+    getRandom(): UnoCard {
+        return new WishUnoCard();
+    }
+
     isValidNextCard(round: Round, card: UnoCard) {
         if("color" in card && card["color"] != round.getForcedColor()) return false;
         if(card instanceof WishUnoCard && !round.getSettings().allowwishonwish) return false;
@@ -13,7 +17,7 @@ export class WishUnoCard extends SpecialUnoCard{
     }
 
     asJson(): {} {
-        return {"cardid":this.uuid,"type":"special"};
+        return {"cardid":this.uuid,"type":"wish"};
     }
     
 }

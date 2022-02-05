@@ -71,6 +71,7 @@ export abstract class Player {
                 const room = RoomManager.getRoom(inJoinRoomPacket.getName());
                 if(room == undefined) {
                     this.send(new OutInvalidJoinRoom(inJoinRoomPacket.getName(), "This room doesn't Exist"));
+                    return;
                 }
                 if(room.getPlayers().includes(this)) {
                     this.send(new OutInvalidJoinRoom(room.getName(), "You are already in this Room!"));
@@ -102,7 +103,7 @@ export abstract class Player {
                 const inStartRoundPacket = InStartRoundPacket.getFromJSON(this, data);
                 if(inStartRoundPacket == null) return;
                 if(this.currentroom == undefined) return;
-                if(this.currentroom.getCurrentRound() == undefined) return;
+                if(this.currentroom.getCurrentRound() != undefined) return;
                 this.currentroom.receiveStartRound(inStartRoundPacket);
                 break;
             case "setName":

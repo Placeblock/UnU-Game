@@ -14,6 +14,7 @@ export class PlayerlistitemComponent{
   @Input('me') isMe!: boolean;
   @Input() ranking!: number;
 
+
   faEthereum = faEthereum;
   faUser = faUser;
   faMedal = faMedal

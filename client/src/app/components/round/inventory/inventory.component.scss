@@ -3,6 +3,8 @@
     bottom: 0px;
     height: 200px;
     width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
 }

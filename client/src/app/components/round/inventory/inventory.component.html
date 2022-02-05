@@ -1,15 +1,22 @@
 
-<div class="card-container"
-    *ngFor="let card of this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.gameService.getPlayer())?.getCards(); let index=index"
-    #element
-    (click)="dropCard(element, card)"
-    [ngClass]="this.gameService.getPlayer() == this.gameService.getCurrentRoom()?.getCurrentRound()?.getCurrentPlayer() ? 'interactable': ''"
-    [ngStyle]="{'transform': 
-        'translateX('+(index*calculateXTranslate()+15)+'px) rotate('+getRotation(index)+'deg)'}">
-    <app-unocard [unucard]="card"></app-unocard>
-</div>
+<ng-container *ngIf="this.roomState.getMe() | async as me">
+    <!--<ng-container *ngIf="this.roundState.getInventory(me) | async as inventory">
+        <ng-container *ngIf="inventory.getCards() | async as cards">`
+            <div class="card-container"
+                *ngFor="let card of cards let index=index"
+                #element
+                (click)="dropCard(element, card)"
+                [ngClass]="(this.roomState.getMe() | async) == (this.roundState.getCurrentPlayer() | async) ? 'interactable': ''"
+                [ngStyle]="{'transform': 
+                    'translateX('+(index*calculateXTranslate(cards.length)+15)+'px) rotate('+ inventory.calculateRotation(index) + ')'}">
+                <app-unocard [unucard]="card"></app-unocard>
+            </div>
+        </ng-container>
+    </ng-container>-->
+</ng-container>
+
 
 <div class="controls">
-    <fa-icon [icon]="faSort" (click)="this.gameService.getCurrentRoom()?.getCurrentRound()?.getInventory(this.gameService.getPlayer())?.sort()"></fa-icon>
+    <fa-icon [icon]="faSort"></fa-icon>
     <fa-icon [icon]="faBullhorn" style="color: red;"></fa-icon>
 </div>

@@ -1,7 +1,6 @@
-import { Round } from "../../round.model";
 import * as cardcolor from "../color.model";
 import {Color} from "../color.model";
-import { UnUCard } from "../un-ucard.model";
+import { JSONUnUCard } from "../jsonun-ucard";
 import { SpecialUnUCard } from "./special-un-ucard.model";
 
 export class InvertUnUCard extends SpecialUnUCard{
@@ -13,16 +12,15 @@ export class InvertUnUCard extends SpecialUnUCard{
         this.color = color;
         this.weight = cardcolor.getWeight(color)+10;
     }
-
-    isValidNextCard(round: Round, card: UnUCard) {
-        if("color" in card && (card as any)["color"] != this.color) return false;
-        return true;
-    }
     getColor(): Color {
         return this.color;
     }
 
     asJson(): {} {
         return {"cardid":this.uuid,"type":"invert","color": this.color};
+    }
+
+    static fromJson(json: JSONUnUCard): InvertUnUCard {
+        return new InvertUnUCard(Color[(json["color"] as keyof typeof Color)]);
     }
 }

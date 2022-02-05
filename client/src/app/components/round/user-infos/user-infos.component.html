@@ -1,1 +1,3 @@
-<app-user-info *ngFor="let player of gameService.getCurrentRoom()?.getCurrentRound()?.getPlayers()" [player]="player"></app-user-info>
+<ng-container *ngFor="let player of (this.players$ | async)">
+    <app-user-info *ngIf="player.uuid != (this.me$ | async)?.uuid" [player]="player"></app-user-info>
+</ng-container>

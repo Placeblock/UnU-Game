@@ -7,6 +7,7 @@ var OutNewOwnerPacket_1 = require("./network/packets/out/room/OutNewOwnerPacket"
 var OutPlayerJoinedRoomPacket_1 = require("./network/packets/out/room/OutPlayerJoinedRoomPacket");
 var OutPlayerLeftRoomPacket_1 = require("./network/packets/out/room/OutPlayerLeftRoomPacket");
 var OutRoundSettingsPacket_1 = require("./network/packets/out/round/OutRoundSettingsPacket");
+var OutStartRound_1 = require("./network/packets/out/round/OutStartRound");
 var RoomManager_1 = require("./RoomManager");
 var Round_1 = require("./Round");
 var Room = /** @class */ (function () {
@@ -83,7 +84,8 @@ var Room = /** @class */ (function () {
     Room.prototype.receiveStartRound = function (packet) {
         if (this.currentround != undefined)
             return;
-        this.currentround = new Round_1.Round(this.players, packet.getRoundSettings(), this);
+        this.currentround = new Round_1.Round(this.players, this.roundsettings, this);
+        this.sendToAllPlayers(new OutStartRound_1.OutStartRoundPacket(this.currentround), []);
     };
     Room.prototype.asJSON = function () {
         var _a;

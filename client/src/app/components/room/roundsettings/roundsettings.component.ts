@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { GameService } from 'src/app/services/game.service';
+import { WebsocketService } from 'src/app/services/websocket.service';
 
 @Component({
-  selector: 'app-createround',
+  selector: 'app-roundsettings',
   templateUrl: './roundsettings.component.html',
   styleUrls: ['./roundsettings.component.scss']
 })
 export class RoundSettingsComponent {
   fouronfour = new FormControl(true);
   twoonfour = new FormControl(false);
-  fourontwo = new FormControl(false);
+  fourontwo = new FormControl(true);
   wishonfour = new FormControl(true);
   fouronwish = new FormControl(true);
-  wishonwish = new FormControl(false);
+  wishonwish = new FormControl(true);
   startcards = new FormControl(7);
 
-  constructor(public gameService: GameService) {
-    //TODO: REMOVE FORM CONTROLS AND SYNC WITH SETTINGS IN SERVICE
-  }
+  constructor(private webSocketService: WebsocketService) {}
 
   update() {
-    this.gameService.setRoundSettings({
+    this.webSocketService.sendMessage("roundSettings", {"settings":{
       "startcardamount":this.startcards.value,
       "allowwishonwish":this.wishonwish.value,
       "allowwishondraw4":this.wishonfour.value,
@@ -29,6 +27,6 @@ export class RoundSettingsComponent {
       "allowdraw4ondraw4":this.fouronfour.value,
       "allowdraw4ondraw2":this.fourontwo.value,
       "allowdraw2ondraw4":this.twoonfour.value
-    });
+    }});
   }
 }

@@ -12,9 +12,7 @@ import { TypeofPipe } from './pipes/typeof.pipe';
 import { CastPipe } from './pipes/cast.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UnocardanimationDirective } from './directives/unocardanimation.directive';
-import { DrawpileComponent } from './components/round/drawpile/drawpile.component';
-import { RoundComponent } from './components/round/round/round.component';
+import { RoundComponent } from './components/round/round.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RoomComponent } from './components/room/room.component';
 import { NgParticlesModule } from "ng-particles";
@@ -23,7 +21,8 @@ import { RoundSettingsComponent } from './components/room/roundsettings/roundset
 import { SwitchComponent } from './components/shared/switch/switch.component';
 import { CounterInputComponent } from './components/shared/counter-input/counter-input.component';
 import { PlayerlistComponent } from './components/shared/playerlist/playerlist.component';
-import { PlayerlistitemComponent } from './components/shared/playerlist/playerlistitem/playerlistitem.component';
+import { PlayerlistitemComponent } from './components/shared/playerlistitem/playerlistitem.component';
+import { GameComponent } from './components/game/game.component';
 
 @NgModule({
   declarations: [
@@ -35,15 +34,14 @@ import { PlayerlistitemComponent } from './components/shared/playerlist/playerli
     InventoryComponent,
     TypeofPipe,
     CastPipe,
-    UnocardanimationDirective,
-    DrawpileComponent,
     RoundComponent,
     RoomComponent,
     RoundSettingsComponent,
     SwitchComponent,
     CounterInputComponent,
     PlayerlistComponent,
-    PlayerlistitemComponent
+    PlayerlistitemComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,

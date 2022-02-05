@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Player } from 'src/app/models/player.model';
+import { Player } from 'src/app/models/player';
 
 @Component({
   selector: 'app-playerlist',
@@ -9,7 +9,6 @@ import { Player } from 'src/app/models/player.model';
 export class PlayerlistComponent {
 
   @Input() players!: Player[];
-  @Input() owner: Player | undefined = undefined;
-  @Input() me: Player | undefined = undefined;
-  
+  @Input() owner!: Player;
+  @Input() me!: Player;
 }

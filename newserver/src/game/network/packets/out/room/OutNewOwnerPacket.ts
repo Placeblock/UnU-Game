@@ -11,7 +11,7 @@ export class OutNewOwnerPacket extends OutPacket {
     }
 
     asJSON(): {} {
-        return {"action":this.action,"uuid":this.player.getUUID()};
+        return {"action":this.action,"player":this.player.asJSON()};
     }
 
     public getPlayer(): Player {

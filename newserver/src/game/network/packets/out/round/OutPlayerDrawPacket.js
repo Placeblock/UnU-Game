@@ -15,22 +15,26 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutPlayerLeftRoomPacket = void 0;
+exports.OutPlayerDrawPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
-var OutPlayerLeftRoomPacket = /** @class */ (function (_super) {
-    __extends(OutPlayerLeftRoomPacket, _super);
-    function OutPlayerLeftRoomPacket(player) {
+var OutPlayerDrawPacket = /** @class */ (function (_super) {
+    __extends(OutPlayerDrawPacket, _super);
+    function OutPlayerDrawPacket(player, unoCard) {
         var _this = _super.call(this) || this;
-        _this.action = "playerLeftRoom";
+        _this.action = "playerDrawCard";
         _this.player = player;
+        _this.unoCard = unoCard;
         return _this;
     }
-    OutPlayerLeftRoomPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON() };
+    OutPlayerDrawPacket.prototype.asJSON = function () {
+        return { "action": this.action, "player": this.player.asJSON(), "unocard": this.unoCard.asJson() };
     };
-    OutPlayerLeftRoomPacket.prototype.getPlayer = function () {
+    OutPlayerDrawPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    return OutPlayerLeftRoomPacket;
+    OutPlayerDrawPacket.prototype.getUnoCard = function () {
+        return this.unoCard;
+    };
+    return OutPlayerDrawPacket;
 }(OutPacket_1.OutPacket));
-exports.OutPlayerLeftRoomPacket = OutPlayerLeftRoomPacket;
+exports.OutPlayerDrawPacket = OutPlayerDrawPacket;

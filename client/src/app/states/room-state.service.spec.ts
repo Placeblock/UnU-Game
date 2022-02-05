@@ -1,4 +1,4 @@
-import { RoomState } from './room-state';
+import { RoomState } from './room-state.service';
 
 describe('RoomState', () => {
   it('should create an instance', () => {

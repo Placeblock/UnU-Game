@@ -15,22 +15,22 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutPlayerLeftRoomPacket = void 0;
+exports.OutStartRoundPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
-var OutPlayerLeftRoomPacket = /** @class */ (function (_super) {
-    __extends(OutPlayerLeftRoomPacket, _super);
-    function OutPlayerLeftRoomPacket(player) {
+var OutStartRoundPacket = /** @class */ (function (_super) {
+    __extends(OutStartRoundPacket, _super);
+    function OutStartRoundPacket(round) {
         var _this = _super.call(this) || this;
-        _this.action = "playerLeftRoom";
-        _this.player = player;
+        _this.action = "startRound";
+        _this.round = round;
         return _this;
     }
-    OutPlayerLeftRoomPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON() };
+    OutStartRoundPacket.prototype.getRound = function () {
+        return this.round;
     };
-    OutPlayerLeftRoomPacket.prototype.getPlayer = function () {
-        return this.player;
+    OutStartRoundPacket.prototype.asJSON = function () {
+        return { "action": this.action, "round": this.round.asJSON() };
     };
-    return OutPlayerLeftRoomPacket;
+    return OutStartRoundPacket;
 }(OutPacket_1.OutPacket));
-exports.OutPlayerLeftRoomPacket = OutPlayerLeftRoomPacket;
+exports.OutStartRoundPacket = OutStartRoundPacket;

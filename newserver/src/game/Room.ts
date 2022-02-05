@@ -6,6 +6,7 @@ import { OutNewOwnerPacket } from "./network/packets/out/room/OutNewOwnerPacket"
 import { OutPlayerJoinedRoomPacket } from "./network/packets/out/room/OutPlayerJoinedRoomPacket";
 import { OutPlayerLeftRoomPacket } from "./network/packets/out/room/OutPlayerLeftRoomPacket";
 import { OutRoundSettingsPacket } from "./network/packets/out/round/OutRoundSettingsPacket";
+import { OutStartRoundPacket } from "./network/packets/out/round/OutStartRound";
 import { Player } from "./player/Player";
 import { RoomManager } from "./RoomManager";
 import { Round } from "./Round";
@@ -96,7 +97,8 @@ export class Room {
 
     public receiveStartRound(packet: InStartRoundPacket) {
         if(this.currentround != undefined) return;
-        this.currentround = new Round(this.players, packet.getRoundSettings(), this);
+        this.currentround = new Round(this.players, this.roundsettings, this);
+        this.sendToAllPlayers(new OutStartRoundPacket(this.currentround), []);
     }
 
     public asJSON(): {} {

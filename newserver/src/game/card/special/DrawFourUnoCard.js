@@ -24,6 +24,9 @@ var DrawFourUnoCard = /** @class */ (function (_super) {
     function DrawFourUnoCard() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    DrawFourUnoCard.prototype.getRandom = function () {
+        return new DrawFourUnoCard();
+    };
     DrawFourUnoCard.prototype.isValidNextCard = function (round, card) {
         if ("color" in card && card["color"] != round.getForcedColor())
             return false;
