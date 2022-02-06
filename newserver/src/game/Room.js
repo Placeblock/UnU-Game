@@ -69,8 +69,6 @@ var Room = /** @class */ (function () {
         }
         this.players.splice(this.players.indexOf(player), 1);
         this.leaderboard["delete"](player);
-        console.log("remove player");
-        console.log(this.currentround);
         if (this.currentround != undefined) {
             this.currentround.removePlayer(player);
         }

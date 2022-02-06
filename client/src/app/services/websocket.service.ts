@@ -59,6 +59,8 @@ export class WebsocketService {
             if(unucard == null) continue;
             newInventory.addCard(unucard);
           }
+          this.roundState.inventorys = new Map;
+          this.roundState.players = [];
           this.roundState.setInventory(data["player"], newInventory);
           break;
         case "startRound":
@@ -98,7 +100,7 @@ export class WebsocketService {
           break;
         case "finishRound":
           this.roomState.roundRunning = false;
-          break;
+          break
         default:
           break;
       }

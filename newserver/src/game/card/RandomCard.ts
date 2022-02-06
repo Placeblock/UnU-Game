@@ -8,7 +8,7 @@ import { UnoCard } from "./UnoCard";
 
 export function randomCard(): UnoCard {
     const random: number = Math.random() * 72;
-    if(random < 30) {
+    if(random < 4) {
         return new DrawFourUnoCard();
     }else if(random < 8) {
         return new WishUnoCard();

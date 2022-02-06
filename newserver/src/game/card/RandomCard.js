@@ -10,7 +10,7 @@ var WishUnoCard_1 = require("./special/WishUnoCard");
 var UnoCard_1 = require("./UnoCard");
 function randomCard() {
     var random = Math.random() * 72;
-    if (random < 30) {
+    if (random < 4) {
         return new DrawFourUnoCard_1.DrawFourUnoCard();
     }
     else if (random < 8) {

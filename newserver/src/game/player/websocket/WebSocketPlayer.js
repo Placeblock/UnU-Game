@@ -36,7 +36,6 @@ var WebSocketPlayer = /** @class */ (function (_super) {
         }, 15000);
         ws.on("message", function (data) {
             var json = JSON.parse(data.toString());
-            console.log(json);
             if (!("action" in json) || !("data" in json)) {
                 _this.send(new OutInvalidMessagePacket_1.OutInvalidMessagePacket("Provide Action and Data!", json));
                 return;

@@ -3,9 +3,9 @@
     <ng-container *ngIf="this.roundState.inventorys$ | async as inventorys">
         <ng-container *ngIf="inventorys.get(this.player.uuid) != undefined">
             <div class="card-container" [ngStyle]="
-            {rotate: inventorys.get(this.player.uuid)?.calculateRotation(index) + 'deg',
-            'scale':(this.roundState.currentplayer$ | async)?.uuid == this.player.uuid ? '0.8' : '0.6',
-            'transform':(inventorys.get(this.player.uuid)?.hoveredcard$ | async) == card ? 'translateY(-30px)' : ''}"
+            {'transform':((inventorys.get(this.player.uuid)?.hoveredcard$ | async) == card ? 'translateY(-30px)' : '') + 
+            ((this.roundState.currentplayer$ | async)?.uuid == this.player.uuid ? ' scale(0.8)' : ' scale(0.6)') +
+            ' rotate('+(inventorys.get(this.player.uuid)?.calculateRotation(index) + 'deg)')}"
             *ngFor="let card of (inventorys.get(this.player.uuid)?.cards$| async); let index=index">
                 <app-unocard [side]="'back'" [unucard]="card"></app-unocard>
             </div>

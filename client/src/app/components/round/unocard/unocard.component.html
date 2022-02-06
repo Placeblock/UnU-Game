@@ -6,9 +6,9 @@
             <div class="bottom">+4</div>
     </ng-container>
     <ng-container *ngIf="(this.unucard | typeof : WishUnUCard)">
-            <div class="top">W</div>
-            <div class="center">W</div>
-            <div class="bottom">W</div>
+            <div class="top"><fa-icon [icon]="faWish"></fa-icon></div>
+            <div class="center"><fa-icon [icon]="faWish"></fa-icon></div>
+            <div class="bottom"><fa-icon [icon]="faWish"></fa-icon></div>
     </ng-container>
     <ng-container *ngIf="(this.unucard | typeof : Draw2UnUCard)">
             <div class="top">+2</div>
@@ -16,14 +16,14 @@
             <div class="bottom">+2</div>
     </ng-container>
     <ng-container *ngIf="(this.unucard | typeof : InvertUnUCard)">
-            <div class="top">I</div>
-            <div class="center">I</div>
-            <div class="bottom">I</div>
+            <div class="top"><fa-icon [icon]="faInvert"></fa-icon></div>
+            <div class="center"><fa-icon [icon]="faInvert" style="display: inline-block; transform: rotate(-60deg);"></fa-icon></div>
+            <div class="bottom"><fa-icon [icon]="faInvert"></fa-icon></div>
     </ng-container>
     <ng-container *ngIf="(this.unucard | typeof : SuspendUnUCard)">
-            <div class="top">S</div>
-            <div class="center">S</div>
-            <div class="bottom">S</div>
+            <div class="top"><fa-icon [icon]="faTimes"></fa-icon></div>
+            <div class="center"><fa-icon [icon]="faTimes"></fa-icon></div>
+            <div class="bottom"><fa-icon [icon]="faTimes"></fa-icon></div>
     </ng-container>
     <ng-container *ngIf="(this.unucard | typeof : NumberUnUCard)">
         <div class="top">{{(this.unucard | cast : NumberUnUCard).getNumber()}}</div>

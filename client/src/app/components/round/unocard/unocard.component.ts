@@ -7,6 +7,7 @@ import { Draw2UnUCard } from 'src/app/models/card/special/draw2-un-ucard.model';
 import { NumberUnUCard } from 'src/app/models/card/number/number-un-ucard.model';
 import { UnUCard } from 'src/app/models/card/un-ucard.model';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { faQuestion, faRetweet, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-unocard',
@@ -33,6 +34,10 @@ export class UnocardComponent {
   Draw2UnUCard = Draw2UnUCard;
   NumberUnUCard = NumberUnUCard;
   SuspendUnUCard = SuspendUnUCard;
+
+  faTimes = faTimes
+  faInvert = faRetweet
+  faWish = faQuestion;
   
   @ContentChild(TemplateRef) public contentTemplateRef!: TemplateRef<any>;
   
