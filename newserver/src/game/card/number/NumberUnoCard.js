@@ -35,9 +35,12 @@ var NumberUnoCard = /** @class */ (function (_super) {
         return new NumberUnoCard(UnoCard_1.UnoCard.randomColor(), Math.floor(Math.random() * 9) + 0);
     };
     NumberUnoCard.prototype.isValidNextCard = function (round, card) {
-        if ((card instanceof NumberUnoCard && card.number != this.number) &&
-            "color" in card && this.color != card["color"])
+        if ("color" in card && this.color != card["color"]) {
+            if (card instanceof NumberUnoCard && card.number == this.number) {
+                return true;
+            }
             return false;
+        }
         return true;
     };
     NumberUnoCard.prototype.asJson = function () {

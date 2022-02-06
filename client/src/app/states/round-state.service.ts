@@ -11,17 +11,6 @@ import { RoundSettings } from "../models/roundsettings";
     providedIn: 'root'
 })
 export class RoundState {
-    public static readonly defaultsettings = {
-        "allowdraw2ondraw4":true,
-        "allowdraw4ondraw2":false,
-        "allowdraw4ondraw4":true,
-        "allowdraw4onwish":true,
-        "allowwishondraw4":true,
-        "allowwishonwish":true,
-        "startcardamount":7
-    }
-    private readonly _settings = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
-    settings$ = this._settings.asObservable();
 
     private _players = new BehaviorSubject<Player[]>([]);
     players$ = this._players.asObservable();
@@ -74,14 +63,6 @@ export class RoundState {
 
     removePlayer(player: Player) {
         this.players = this.players.filter(value => value.uuid != player.uuid);
-    }
-
-    get settings(): RoundSettings {
-        return this._settings.getValue();
-    }
-
-    set settings(settings: RoundSettings) {
-        this._settings.next(settings);
     }
 
     get currentplayer(): Player | null {

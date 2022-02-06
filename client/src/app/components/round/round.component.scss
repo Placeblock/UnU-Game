@@ -51,3 +51,11 @@
     display: flex;
     gap: 50px;
 }
+
+.hoverable {
+    transition: scale 0.2s ease-in-out;
+}
+
+.hoverable:hover {
+    scale: 1.1;
+}

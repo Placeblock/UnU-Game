@@ -15,29 +15,21 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.InWishColorPacket = void 0;
+exports.InSayUNOPacket = void 0;
 var InPacket_1 = require("../InPacket");
-var InWishColorPacket = /** @class */ (function (_super) {
-    __extends(InWishColorPacket, _super);
-    function InWishColorPacket(player, color) {
+var InSayUNOPacket = /** @class */ (function (_super) {
+    __extends(InSayUNOPacket, _super);
+    function InSayUNOPacket(player) {
         var _this = _super.call(this) || this;
-        _this.color = color;
         _this.player = player;
         return _this;
     }
-    InWishColorPacket.prototype.getColor = function () {
-        return this.color;
-    };
-    InWishColorPacket.prototype.getPlayer = function () {
+    InSayUNOPacket.prototype.getPlayer = function () {
         return this.player;
     };
-    InWishColorPacket.getFromJSON = function (player, json) {
-        if (!("color" in json))
-            return null;
-        if (json["color"] != "RED" && json["color"] != "BLUE" && json["color"] != "YELLOW" && json["color"] != "GREEN")
-            return null;
-        return new InWishColorPacket(player, json["color"]);
+    InSayUNOPacket.getFromJSON = function (player, json) {
+        return new InSayUNOPacket(player);
     };
-    return InWishColorPacket;
+    return InSayUNOPacket;
 }(InPacket_1.InPacket));
-exports.InWishColorPacket = InWishColorPacket;
+exports.InSayUNOPacket = InSayUNOPacket;

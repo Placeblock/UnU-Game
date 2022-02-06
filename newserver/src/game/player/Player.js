@@ -17,6 +17,8 @@ var InJoinRoomPacket_1 = require("../network/packets/in/room/InJoinRoomPacket");
 var RoomManager_1 = require("../RoomManager");
 var OutInvalidJoinRoom_1 = require("../network/packets/out/room/OutInvalidJoinRoom");
 var InRoundSettingsPacket_1 = require("../network/packets/in/round/InRoundSettingsPacket");
+var InSayUNOPacket_1 = require("../network/packets/in/round/InSayUNOPacket");
+var InEndTurnPacket_1 = require("../network/packets/in/round/InEndTurnPacket");
 var Player = /** @class */ (function () {
     function Player() {
         this.uuid = (0, uuid_1.v4)();
@@ -143,6 +145,25 @@ var Player = /** @class */ (function () {
                     return;
                 this.currentroom.getCurrentRound().receiveWishColor(inWishColorPacket);
                 break;
+            case "sayUNU":
+                var inSayUnoPacket = InSayUNOPacket_1.InSayUNOPacket.getFromJSON(this, data);
+                if (inSayUnoPacket == null)
+                    return;
+                if (this.currentroom == undefined)
+                    return;
+                if (this.currentroom.getCurrentRound() == undefined)
+                    return;
+                this.currentroom.getCurrentRound().receiveSayUno(inSayUnoPacket);
+                break;
+            case "endTurn":
+                var inEndTurnPacket = InEndTurnPacket_1.InEndTurnPacket.getFromJSON(this, data);
+                if (inEndTurnPacket == null)
+                    return;
+                if (this.currentroom == undefined)
+                    return;
+                if (this.currentroom.getCurrentRound() == undefined)
+                    return;
+                this.currentroom.getCurrentRound().receiveEndTurn(inEndTurnPacket);
             default:
                 this.send(new OutInvalidMessagePacket_1.OutInvalidMessagePacket("Invalid Message", { "action": action, "data": data }));
                 break;

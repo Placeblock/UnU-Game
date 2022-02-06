@@ -25,8 +25,12 @@ export class NumberUnoCard extends UnoCard implements Colorable {
     }
 
     isValidNextCard(round: Round, card: UnoCard): boolean {
-        if((card instanceof NumberUnoCard && card.number != this.number) && 
-            "color" in card && this.color != card["color"]) return false;
+        if("color" in card && this.color != card["color"]) {
+            if(card instanceof NumberUnoCard && card.number == this.number) {
+                return true;
+            }
+            return false;
+        }
         return true;
     }
 

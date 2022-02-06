@@ -64,7 +64,6 @@ export class WebsocketService {
           this.roundState.currentcard = unuCard;
           this.roundState.currentplayer = data["round"]["currentplayer"];
           this.roundState.forcedcolor = null;
-          this.roundState.settings = data["round"]["settings"];
           for(const jsoninventory of data["round"]["inventorys"]) {
             if(jsoninventory["player"].uuid == this.roomState.me?.uuid) continue;
             const inventory = new Inventory();

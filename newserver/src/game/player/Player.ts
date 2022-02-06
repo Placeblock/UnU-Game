@@ -15,6 +15,8 @@ import { InJoinRoomPacket } from '../network/packets/in/room/InJoinRoomPacket';
 import { RoomManager } from '../RoomManager';
 import { OutInvalidJoinRoom } from '../network/packets/out/room/OutInvalidJoinRoom';
 import { InRoundSettingsPacket } from '../network/packets/in/round/InRoundSettingsPacket';
+import { InSayUNOPacket } from '../network/packets/in/round/InSayUNOPacket';
+import { InEndTurnPacket } from '../network/packets/in/round/InEndTurnPacket';
 
 export abstract class Player {
     protected readonly uuid: string = v4();
@@ -134,6 +136,19 @@ export abstract class Player {
                 if(this.currentroom.getCurrentRound() == undefined) return;
                 this.currentroom.getCurrentRound().receiveWishColor(inWishColorPacket);
                 break;
+            case "sayUNU":
+                const inSayUnoPacket = InSayUNOPacket.getFromJSON(this, data);
+                if(inSayUnoPacket == null) return;
+                if(this.currentroom == undefined) return;
+                if(this.currentroom.getCurrentRound() == undefined) return;
+                this.currentroom.getCurrentRound().receiveSayUno(inSayUnoPacket);
+                break;
+            case "endTurn":
+                const inEndTurnPacket = InEndTurnPacket.getFromJSON(this, data);
+                if(inEndTurnPacket == null) return;
+                if(this.currentroom == undefined) return;
+                if(this.currentroom.getCurrentRound() == undefined) return;
+                this.currentroom.getCurrentRound().receiveEndTurn(inEndTurnPacket);
             default:
                 this.send(new OutInvalidMessagePacket("Invalid Message", {"action":action,"data":data}));
                 break;

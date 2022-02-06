@@ -106,6 +106,10 @@ export class Room {
         for(let player of this.players) {
             jsonplayers.push(player.asJSON());
         }
-        return {"name":this.name,"owner":this.owner.asJSON(),"players":jsonplayers,"round":this.currentround?.asJSON()};
+        return {"name":this.name,
+                "owner":this.owner.asJSON(),
+                "players":jsonplayers,
+                "settings":this.roundsettings,
+                "round":this.currentround?.asJSON()};
     }
 }

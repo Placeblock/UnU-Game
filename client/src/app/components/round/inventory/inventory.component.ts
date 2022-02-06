@@ -18,6 +18,14 @@ export class InventoryComponent {
   constructor(public roundState: RoundState, public roomState: RoomState, private webSocketService: WebsocketService) {
   }
 
+  sayUnu() {
+    this.webSocketService.sendMessage("sayUNU", {});
+  }
+
+  endTurn() {
+    this.webSocketService.sendMessage("endTurn", {});
+  }
+
   dropCard(element: HTMLElement, card: UnUCard) {
     if(this.roundState.currentplayer?.uuid != this.roomState.me?.uuid) return;
     this.webSocketService.sendMessage("playCard", {"card":card.asJson()});

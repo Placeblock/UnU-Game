@@ -19,6 +19,7 @@ var OutPlayerLeftRoundPacket_1 = require("./network/packets/out/round/OutPlayerL
 var OutPlayerPlayCardPacket_1 = require("./network/packets/out/round/OutPlayerPlayCardPacket");
 var OutWishCardInvalidPacket_1 = require("./network/packets/out/round/OutWishCardInvalidPacket");
 var OutWishCardPacket_1 = require("./network/packets/out/round/OutWishCardPacket");
+var OutPlayerSayUNUPacket_1 = require("./network/packets/out/round/OutPlayerSayUNUPacket");
 var Round = /** @class */ (function () {
     function Round(players, settings, room) {
         this.players = [];
@@ -28,6 +29,7 @@ var Round = /** @class */ (function () {
         this.leaderboard = [];
         this.direction = true;
         this.currentdrawamount = 0;
+        this.sayUnoTimer = new Map;
         this.room = room;
         this.players = players;
         this.currentplayer = players[Math.floor(Math.random() * players.length)];
@@ -43,19 +45,11 @@ var Round = /** @class */ (function () {
                 this.currentcard = card;
             }
             this.inventorys.get(player).addCard(new WishUnoCard_1.WishUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard_1.DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard_1.DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard_1.DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard_1.DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard_1.DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard_1.DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard_1.DrawTwoUnoCard("RED"));
+            this.inventorys.get(player).addCard(new WishUnoCard_1.WishUnoCard());
+            this.inventorys.get(player).addCard(new WishUnoCard_1.WishUnoCard());
             player.send(new OutInventoryDataPacket_1.OutInventoryDataPacket(player, this.inventorys.get(player)));
         }
     }
-    Round.prototype.getForcedColor = function () {
-        return this.forcedcolor;
-    };
     Round.prototype.getPlayers = function () {
         return this.players;
     };
@@ -64,9 +58,6 @@ var Round = /** @class */ (function () {
         return this.players.filter(function (element) {
             return _this.inventorys.get(element).getCards().length > 0;
         });
-    };
-    Round.prototype.getCurrentPlayer = function () {
-        return this.currentplayer;
     };
     Round.prototype.getPlayerInventory = function (player) {
         return this.inventorys.get(player);
@@ -77,11 +68,15 @@ var Round = /** @class */ (function () {
     Round.prototype.addLeaderboardPlayer = function (player) {
         this.leaderboard.push(player);
     };
-    Round.prototype.setForcedColor = function (color, player) {
+    Round.prototype.setForcedColor = function (color) {
         this.forcedcolor = color;
         this.room.sendToAllPlayers(new OutForcedColorPacket_1.OutForcedColorPacket(color), []);
     };
+    Round.prototype.getForcedColor = function () {
+        return this.forcedcolor;
+    };
     Round.prototype.playCard = function (unoCard) {
+        var _this = this;
         this.currentcard = unoCard;
         this.getPlayerInventory(this.currentplayer).removeCard(unoCard);
         this.room.sendToAllPlayers(new OutPlayerPlayCardPacket_1.OutPlayerPlayCardPacket(this.currentplayer, unoCard), []);
@@ -89,22 +84,27 @@ var Round = /** @class */ (function () {
         if (this.isFinished()) {
             //TODO END ROUND (Add to Leaderboard)
         }
+        if (this.inventorys.get(this.currentplayer).getCards().length == 1) {
+            this.sayUnoTimer.set(this.currentplayer.getUUID(), setTimeout(function (player) {
+                console.log("drawtimer");
+                _this.drawCard(player, 2);
+            }, 10000, this.currentplayer));
+        }
         var nextPlayer = this.getNextPlayer(this.currentplayer, true);
         if (unoCard instanceof NumberUnoCard_1.NumberUnoCard) {
-            this.drawCard(this.currentdrawamount);
-            this.currentdrawamount = 0;
+            this.applyDrawQueue();
             this.setForcedColor(undefined);
             this.nextPlayer(nextPlayer);
         }
         else if (unoCard instanceof InvertDirectionUnoCard_1.InvertDirectionUnoCard) {
-            this.drawCard(this.currentdrawamount);
+            this.applyDrawQueue();
             this.currentdrawamount = 0;
             this.direction = !this.direction;
             this.setForcedColor(undefined);
             this.nextPlayer(nextPlayer);
         }
         else if (unoCard instanceof SuspendUnoCard_1.SuspendUnUCard) {
-            this.drawCard(this.currentdrawamount);
+            this.applyDrawQueue();
             this.currentdrawamount = 0;
             nextPlayer = this.getNextPlayer(nextPlayer, true);
             this.setForcedColor(undefined);
@@ -123,22 +123,24 @@ var Round = /** @class */ (function () {
             this.currentplayer.send(new OutWishCardPacket_1.OutWishCardPacket());
         }
     };
-    Round.prototype.drawCard = function (amount) {
+    Round.prototype.drawCard = function (player, amount) {
         if (amount === void 0) { amount = 1; }
         for (var i = 0; i < amount; i++) {
             var randomcard = (0, RandomCard_1.randomCard)();
-            this.getPlayerInventory(this.currentplayer).addCard(randomcard);
-            this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket_1.OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
-            this.currentplayer.send(new OutDrawPacket_1.OutDrawPacket(randomcard));
+            this.getPlayerInventory(player).addCard(randomcard);
+            this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket_1.OutPlayerDrawHiddenPacket(player, randomcard), [player]);
+            player.send(new OutDrawPacket_1.OutDrawPacket(randomcard));
         }
-        this.currentplayerdrawedcard = true;
+    };
+    Round.prototype.getValidNextCards = function () {
+        var unoCards = [];
         for (var _i = 0, _a = this.getPlayerInventory(this.currentplayer).getCards(); _i < _a.length; _i++) {
             var card = _a[_i];
             if (this.currentcard.isValidNextCard(this, card)) {
-                return;
+                unoCards.push(card);
             }
         }
-        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+        return unoCards;
     };
     Round.prototype.removePlayer = function (player) {
         this.inventorys["delete"](player);
@@ -149,7 +151,10 @@ var Round = /** @class */ (function () {
             return;
         }
         if (this.currentplayer == player) {
-            this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+            var nextPlayer = this.getNextPlayer(this.currentplayer, true);
+            if (nextPlayer == null)
+                return;
+            this.nextPlayer(nextPlayer);
         }
         this.room.sendToAllPlayers(new OutPlayerLeftRoundPacket_1.OutPlayerLeftRoundPacket(player), []);
     };
@@ -158,6 +163,18 @@ var Round = /** @class */ (function () {
         this.currentplayerdrawedcard = false;
         this.currentplayer = player;
         this.room.sendToAllPlayers(new OutCurrentPlayerPacket_1.OutCurrentPlayerPacket(player), []);
+        for (var _i = 0, _a = this.getValidNextCards(); _i < _a.length; _i++) {
+            var unoCard = _a[_i];
+            if (unoCard instanceof DrawFourUnoCard_1.DrawFourUnoCard || unoCard instanceof DrawTwoUnoCard_1.DrawTwoUnoCard) {
+                return;
+            }
+        }
+        this.applyDrawQueue();
+        console.log("drawqueue");
+    };
+    Round.prototype.applyDrawQueue = function () {
+        this.drawCard(this.currentplayer, this.currentdrawamount);
+        this.currentdrawamount = 0;
     };
     Round.prototype.isFinished = function () {
         var playerwithcards = this.getPlayersWithCards();
@@ -188,20 +205,8 @@ var Round = /** @class */ (function () {
             }
         }
     };
-    Round.prototype.getStartCardAmount = function () {
-        return this.settings.startcardamount;
-    };
     Round.prototype.getSettings = function () {
         return this.settings;
-    };
-    Round.prototype.getUnoCardFromListById = function (uuid, list) {
-        for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
-            var item = list_1[_i];
-            if (item.getUUID() == uuid) {
-                return item;
-            }
-        }
-        return null;
     };
     Round.prototype.receivePlayCard = function (packet) {
         var unoCard = this.inventorys.get(packet.getPlayer()).getCardByID(packet.getCardID());
@@ -215,8 +220,6 @@ var Round = /** @class */ (function () {
             return;
         }
         if (!this.currentcard.isValidNextCard(this, unoCard)) {
-            console.log(this.currentcard);
-            console.log(unoCard);
             player.send(new OutPlayCardInvalidPacket_1.OutPlayCardInvalidPacket("Card not maching with previus"));
             return;
         }
@@ -241,11 +244,7 @@ var Round = /** @class */ (function () {
             player.send(new OutWishCardInvalidPacket_1.OutWishCardInvalidPacket("No valid Previus card"));
             return;
         }
-        if (color != "RED" && color != "BLUE" && color != "YELLOW" && color != "GREEN") {
-            player.send(new OutWishCardInvalidPacket_1.OutWishCardInvalidPacket("Invalid Color"));
-            return;
-        }
-        this.setForcedColor(color, player);
+        this.setForcedColor(color);
         this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     };
     Round.prototype.receiveDrawCard = function (packet) {
@@ -256,7 +255,24 @@ var Round = /** @class */ (function () {
             return;
         if (this.currentplayerdrawedcard)
             return;
-        this.drawCard();
+        this.drawCard(player);
+        console.log("drawcard");
+        this.currentplayerdrawedcard = true;
+        if (this.getValidNextCards().length > 0)
+            return;
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+    };
+    Round.prototype.receiveSayUno = function (packet) {
+        var player = packet.getPlayer();
+        clearTimeout(this.sayUnoTimer.get(player.getUUID()));
+        this.room.sendToAllPlayers(new OutPlayerSayUNUPacket_1.OutPlayerSayUNUPacket(player), []);
+    };
+    Round.prototype.receiveEndTurn = function (packet) {
+        if (packet.getPlayer() != this.currentplayer)
+            return;
+        if (!this.currentplayerdrawedcard)
+            return;
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     };
     Round.prototype.asJSON = function () {
         var jsonplayers = [];

@@ -94,7 +94,11 @@ var Room = /** @class */ (function () {
             var player = _b[_i];
             jsonplayers.push(player.asJSON());
         }
-        return { "name": this.name, "owner": this.owner.asJSON(), "players": jsonplayers, "round": (_a = this.currentround) === null || _a === void 0 ? void 0 : _a.asJSON() };
+        return { "name": this.name,
+            "owner": this.owner.asJSON(),
+            "players": jsonplayers,
+            "settings": this.roundsettings,
+            "round": (_a = this.currentround) === null || _a === void 0 ? void 0 : _a.asJSON() };
     };
     return Room;
 }());

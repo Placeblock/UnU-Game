@@ -8,7 +8,7 @@
 .card-container {
     position: absolute;
     transform-origin: bottom center;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s ease-in-out, scale 0.3s ease-in-out;
 }
 
 .cards {

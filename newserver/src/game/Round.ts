@@ -23,6 +23,9 @@ import { Player } from "./player/Player";
 import { Room } from "./Room";
 import { RoundSettings } from "./RoundSettings";
 import { OutWishCardPacket } from "./network/packets/out/round/OutWishCardPacket";
+import { InSayUNOPacket } from "./network/packets/in/round/InSayUNOPacket";
+import { OutPlayerSayUNUPacket } from "./network/packets/out/round/OutPlayerSayUNUPacket";
+import { InEndTurnPacket } from "./network/packets/in/round/InEndTurnPacket";
 
 export class Round {
     private readonly room: Room;
@@ -37,6 +40,7 @@ export class Round {
     private settings: RoundSettings;
     private direction: boolean = true;
     private currentdrawamount: number = 0;
+    private sayUnoTimer: Map<string, NodeJS.Timeout> = new Map;
 
     constructor(players: Player[], settings: RoundSettings, room: Room) {
         this.room = room;
@@ -53,19 +57,10 @@ export class Round {
                 this.currentcard = card;
             }
             this.inventorys.get(player).addCard(new WishUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawFourUnoCard());
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
-            this.inventorys.get(player).addCard(new DrawTwoUnoCard("RED"));
+            this.inventorys.get(player).addCard(new WishUnoCard());
+            this.inventorys.get(player).addCard(new WishUnoCard());
             player.send(new OutInventoryDataPacket(player, this.inventorys.get(player)));
         }
-    }
-
-    getForcedColor(): string {
-        return this.forcedcolor;
     }
 
     getPlayers(): Player[] {
@@ -76,10 +71,6 @@ export class Round {
         return this.players.filter((element) => {
             return this.inventorys.get(element).getCards().length > 0;
         })
-    }
-
-    getCurrentPlayer(): Player {
-        return this.currentplayer;
     }
 
     getPlayerInventory(player: Player): Inventory {
@@ -94,9 +85,13 @@ export class Round {
         this.leaderboard.push(player);
     }
 
-    setForcedColor(color: string, player?: Player) {
+    setForcedColor(color: string) {
         this.forcedcolor = color;
         this.room.sendToAllPlayers(new OutForcedColorPacket(color), []);
+    }
+
+    getForcedColor(): string {
+        return this.forcedcolor;
     }
 
     playCard(unoCard: UnoCard) {
@@ -107,20 +102,25 @@ export class Round {
         if(this.isFinished()) {
             //TODO END ROUND (Add to Leaderboard)
         }
+        if(this.inventorys.get(this.currentplayer).getCards().length == 1) {
+            this.sayUnoTimer.set(this.currentplayer.getUUID(), setTimeout((player) => {
+                console.log("drawtimer");
+                this.drawCard(player, 2);
+            }, 10000, this.currentplayer));
+        }
         var nextPlayer = this.getNextPlayer(this.currentplayer, true);
         if(unoCard instanceof NumberUnoCard) {
-            this.drawCard(this.currentdrawamount);
-            this.currentdrawamount = 0;
+            this.applyDrawQueue()
             this.setForcedColor(undefined);
             this.nextPlayer(nextPlayer);
         }else if(unoCard instanceof InvertDirectionUnoCard) {
-            this.drawCard(this.currentdrawamount);
+            this.applyDrawQueue()
             this.currentdrawamount = 0;
             this.direction = !this.direction;
             this.setForcedColor(undefined);
             this.nextPlayer(nextPlayer);
         }else if(unoCard instanceof SuspendUnUCard) {
-            this.drawCard(this.currentdrawamount);
+            this.applyDrawQueue()
             this.currentdrawamount = 0;
             nextPlayer = this.getNextPlayer(nextPlayer, true);
             this.setForcedColor(undefined);
@@ -137,20 +137,23 @@ export class Round {
         }
     }
 
-    drawCard(amount: number = 1) {
+    drawCard(player, amount: number = 1) {
         for(var i = 0; i < amount; i ++) {
             const randomcard = randomCard();
-            this.getPlayerInventory(this.currentplayer).addCard(randomcard);
-            this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket(this.currentplayer, randomcard), [this.currentplayer]);
-            this.currentplayer.send(new OutDrawPacket(randomcard));
+            this.getPlayerInventory(player).addCard(randomcard);
+            this.room.sendToAllPlayers(new OutPlayerDrawHiddenPacket(player, randomcard), [player]);
+            player.send(new OutDrawPacket(randomcard));
         }
-        this.currentplayerdrawedcard = true;
+    }
+
+    getValidNextCards(): UnoCard[] {
+        const unoCards: UnoCard[] = [];
         for(var card of this.getPlayerInventory(this.currentplayer).getCards()) {
             if(this.currentcard.isValidNextCard(this, card)) {
-                return;
+                unoCards.push(card);
             }
         }
-        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+        return unoCards;
     }
 
     removePlayer(player: Player) {
@@ -162,7 +165,9 @@ export class Round {
             return;
         }
         if(this.currentplayer == player) {
-            this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+            const nextPlayer = this.getNextPlayer(this.currentplayer, true);
+            if(nextPlayer == null) return;
+            this.nextPlayer(nextPlayer);
         }
         this.room.sendToAllPlayers(new OutPlayerLeftRoundPacket(player), []);
     }
@@ -172,6 +177,18 @@ export class Round {
         this.currentplayerdrawedcard = false;
         this.currentplayer = player;
         this.room.sendToAllPlayers(new OutCurrentPlayerPacket(player), []);
+        for(var unoCard of this.getValidNextCards()) {
+            if(unoCard instanceof DrawFourUnoCard || unoCard instanceof DrawTwoUnoCard) {
+                return;
+            }
+        }
+        this.applyDrawQueue();
+        console.log("drawqueue");
+    }
+
+    applyDrawQueue() {
+        this.drawCard(this.currentplayer, this.currentdrawamount);
+        this.currentdrawamount = 0;
     }
 
     isFinished(): Player | null {
@@ -182,7 +199,7 @@ export class Round {
         return null;
     }
 
-    getNextPlayer(player: Player, hasCards: boolean) {
+    getNextPlayer(player: Player, hasCards: boolean): Player | undefined {
         var players = this.players;
         if(hasCards) {
             players = this.getPlayersWithCards();
@@ -243,11 +260,7 @@ export class Round {
             player.send(new OutWishCardInvalidPacket("No valid Previus card"));
             return;
         }
-        if(color != "RED" && color != "BLUE" && color != "YELLOW" && color != "GREEN") {
-            player.send(new OutWishCardInvalidPacket("Invalid Color"));
-            return;
-        }
-        this.setForcedColor(color, player);
+        this.setForcedColor(color);
         this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     }
 
@@ -256,7 +269,23 @@ export class Round {
         if(player != this.currentplayer) return;
         if(this.currentplayerplayedcard) return;
         if(this.currentplayerdrawedcard) return;
-        this.drawCard();
+        this.drawCard(player);
+        console.log("drawcard");
+        this.currentplayerdrawedcard = true;
+        if(this.getValidNextCards().length > 0) return;
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+    }
+
+    receiveSayUno(packet: InSayUNOPacket) {
+        const player = packet.getPlayer();
+        clearTimeout(this.sayUnoTimer.get(player.getUUID()));
+        this.room.sendToAllPlayers(new OutPlayerSayUNUPacket(player), []);
+    }
+
+    receiveEndTurn(packet: InEndTurnPacket) {
+        if(packet.getPlayer() != this.currentplayer) return;
+        if(!this.currentplayerdrawedcard) return;
+        this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
     }
 
     public asJSON(): {} {

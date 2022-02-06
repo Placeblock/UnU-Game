@@ -2,7 +2,11 @@
 <div>{{roundState.drawqueue}}</div>
 <div id="center-container">
     <div id="cardstack">
-        <div tooltip="Draw Card" placement="top" [showDelay]="100" id="stackcard-container" (click)="drawCard()" *ngFor="let item of [].constructor(5); let i = index">
+        <div tooltip="Draw Card" placement="top" [showDelay]="100" 
+             id="stackcard-container" 
+             (click)="drawCard()" 
+             *ngFor="let item of [].constructor(5); let i = index"
+             [ngClass]="{'hoverable': (roomState.me$ | async)?.uuid == (this.roundState.currentplayer$ | async)?.uuid}">
             <app-unocard [unucard]="this.stackCard" [side]="'back'"></app-unocard>
         </div>
     </div>

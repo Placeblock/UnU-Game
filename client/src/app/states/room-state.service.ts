@@ -20,7 +20,15 @@ export class RoomState {
     authName$ = this._authName.asObservable();
     private _isShowingSettings = new BehaviorSubject<boolean>(false);
     isShowingSettings$ = this._isShowingSettings.asObservable();
-    private _settings = new BehaviorSubject<RoundSettings>(RoundState.defaultsettings);
+    private _settings = new BehaviorSubject<RoundSettings>({
+        "allowdraw2ondraw4":true,
+        "allowdraw4ondraw2":false,
+        "allowdraw4ondraw4":true,
+        "allowdraw4onwish":true,
+        "allowwishondraw4":true,
+        "allowwishonwish":true,
+        "startcardamount":7
+    });
     settings$ = this._settings.asObservable();
     private _isRoundRunning = new BehaviorSubject<boolean>(false);
     isRoundRunning$ = this._isRoundRunning.asObservable();
@@ -74,6 +82,7 @@ export class RoomState {
     }
 
     get settings(): RoundSettings {
+        console.log(this._settings);
         return this._settings.getValue();
     }
 
