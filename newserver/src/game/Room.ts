@@ -16,7 +16,7 @@ export class Room {
     private name: string;
     private readonly players: Player[] = [];
     private owner: Player;
-    private currentround: Round;
+    private currentround: Round | null;
     private roundsettings: RoundSettings = {
         "startcardamount":7,
         "allowwishonwish":true,
@@ -26,6 +26,7 @@ export class Room {
         "allowdraw4ondraw2":true,
         "allowdraw2ondraw4":false
     };
+    private leaderboard: Map<Player, number> = new Map;
 
     constructor(owner: Player) {
         this.owner = owner;
@@ -39,6 +40,18 @@ export class Room {
 
     public getPlayers(): Player[] {
         return this.players;
+    }
+
+    public getLeaderboard(): Map<Player, number> {
+        return this.leaderboard;
+    }
+
+    public increaseLeaderboardPlayer(player: Player) {
+        if(this.leaderboard.has(player)) {
+            this.leaderboard.set(player, this.leaderboard.get(player) + 1);
+        }else {
+            this.leaderboard.set(player, 1);
+        }
     }
 
     public addPlayer(player: Player) {
@@ -57,6 +70,9 @@ export class Room {
             return;
         }
         this.players.splice(this.players.indexOf(player), 1);
+        this.leaderboard.delete(player);
+        console.log("remove player");
+        console.log(this.currentround);
         if(this.currentround != undefined) {
             this.currentround.removePlayer(player);
         }
@@ -75,8 +91,12 @@ export class Room {
     }
 
     public startNewRound(): Round {
-        var round: Round = new Round(this.players, this.roundsettings, this);
+        var round: Round = new Round([...this.players], this.roundsettings, this);
         return round;
+    }
+
+    public deleteRound() {
+        this.currentround = null;
     }
 
     public setRoundSettings(roundSettings: RoundSettings) {

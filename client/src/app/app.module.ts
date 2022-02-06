@@ -23,6 +23,7 @@ import { CounterInputComponent } from './components/shared/counter-input/counter
 import { PlayerlistComponent } from './components/shared/playerlist/playerlist.component';
 import { PlayerlistitemComponent } from './components/shared/playerlistitem/playerlistitem.component';
 import { GameComponent } from './components/game/game.component';
+import { NextTimerComponent } from './components/round/next-timer/next-timer.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { GameComponent } from './components/game/game.component';
     CounterInputComponent,
     PlayerlistComponent,
     PlayerlistitemComponent,
-    GameComponent
+    GameComponent,
+    NextTimerComponent
   ],
   imports: [
     BrowserModule,

@@ -15,23 +15,18 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutStartRoundPacket = void 0;
+exports.OutRoundFinishedPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
-var OutStartRoundPacket = /** @class */ (function (_super) {
-    __extends(OutStartRoundPacket, _super);
-    function OutStartRoundPacket(round) {
+var OutRoundFinishedPacket = /** @class */ (function (_super) {
+    __extends(OutRoundFinishedPacket, _super);
+    function OutRoundFinishedPacket() {
         var _this = _super.call(this) || this;
-        _this.action = "startRound";
-        _this.round = round;
+        _this.action = "finishRound";
         return _this;
     }
-    OutStartRoundPacket.prototype.getRound = function () {
-        return this.round;
+    OutRoundFinishedPacket.prototype.asJSON = function () {
+        return { "action": this.action };
     };
-    OutStartRoundPacket.prototype.asJSON = function () {
-        console.log(Date.now());
-        return { "action": this.action, "round": this.round.asJSON(), "timestamp": Date.now() };
-    };
-    return OutStartRoundPacket;
+    return OutRoundFinishedPacket;
 }(OutPacket_1.OutPacket));
-exports.OutStartRoundPacket = OutStartRoundPacket;
+exports.OutRoundFinishedPacket = OutRoundFinishedPacket;

@@ -16,8 +16,22 @@
     height: 230px;
     display: flex;
     justify-content: center;
+    align-items: center
 }
+
 p {
     color: white;
     font-size: 25px;
+}
+
+#firstplace {
+    color: gold;
+}
+
+#secondplace {
+    color: silver;
+}
+
+#thirdplace {
+    color: rgb(189, 77, 50);
 }

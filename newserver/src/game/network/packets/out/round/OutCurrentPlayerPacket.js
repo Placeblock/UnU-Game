@@ -26,7 +26,7 @@ var OutCurrentPlayerPacket = /** @class */ (function (_super) {
         return _this;
     }
     OutCurrentPlayerPacket.prototype.asJSON = function () {
-        return { "action": this.action, "player": this.player.asJSON() };
+        return { "action": this.action, "player": this.player.asJSON(), "timestamp": Date.now() };
     };
     OutCurrentPlayerPacket.prototype.getPlayer = function () {
         return this.player;

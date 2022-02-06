@@ -1,4 +1,13 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 exports.__esModule = true;
 exports.Room = void 0;
 var random_word_slugs_1 = require("random-word-slugs");
@@ -22,6 +31,7 @@ var Room = /** @class */ (function () {
             "allowdraw4ondraw2": true,
             "allowdraw2ondraw4": false
         };
+        this.leaderboard = new Map;
         this.owner = owner;
         this.name = (0, random_word_slugs_1.generateSlug)();
         this.addPlayer(this.owner);
@@ -31,6 +41,17 @@ var Room = /** @class */ (function () {
     };
     Room.prototype.getPlayers = function () {
         return this.players;
+    };
+    Room.prototype.getLeaderboard = function () {
+        return this.leaderboard;
+    };
+    Room.prototype.increaseLeaderboardPlayer = function (player) {
+        if (this.leaderboard.has(player)) {
+            this.leaderboard.set(player, this.leaderboard.get(player) + 1);
+        }
+        else {
+            this.leaderboard.set(player, 1);
+        }
     };
     Room.prototype.addPlayer = function (player) {
         if (this.players.includes(player)) {
@@ -47,6 +68,9 @@ var Room = /** @class */ (function () {
             return;
         }
         this.players.splice(this.players.indexOf(player), 1);
+        this.leaderboard["delete"](player);
+        console.log("remove player");
+        console.log(this.currentround);
         if (this.currentround != undefined) {
             this.currentround.removePlayer(player);
         }
@@ -63,8 +87,11 @@ var Room = /** @class */ (function () {
         return this.currentround;
     };
     Room.prototype.startNewRound = function () {
-        var round = new Round_1.Round(this.players, this.roundsettings, this);
+        var round = new Round_1.Round(__spreadArray([], this.players, true), this.roundsettings, this);
         return round;
+    };
+    Room.prototype.deleteRound = function () {
+        this.currentround = null;
     };
     Room.prototype.setRoundSettings = function (roundSettings) {
         this.roundsettings = roundSettings;

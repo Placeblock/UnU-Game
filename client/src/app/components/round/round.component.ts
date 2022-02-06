@@ -12,6 +12,7 @@ import { RoundState } from 'src/app/states/round-state.service';
 })
 export class RoundComponent {
   stackCard = new NumberUnUCard("", 0, Color.RED);
+
   Color = Color;
 
   constructor(public roundState: RoundState, public roomState: RoomState, private websocketService: WebsocketService) {}

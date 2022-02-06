@@ -29,6 +29,8 @@ var InvertDirectionUnoCard = /** @class */ (function (_super) {
         return new InvertDirectionUnoCard(UnoCard_1.UnoCard.randomColor());
     };
     InvertDirectionUnoCard.prototype.isValidNextCard = function (round, card) {
+        if (card instanceof InvertDirectionUnoCard)
+            return true;
         if ("color" in card && card["color"] != this.color)
             return false;
         return true;

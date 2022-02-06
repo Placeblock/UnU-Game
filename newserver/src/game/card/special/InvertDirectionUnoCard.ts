@@ -16,6 +16,7 @@ export class InvertDirectionUnoCard extends SpecialUnoCard implements Colorable{
     }
 
     isValidNextCard(round: Round, card: UnoCard) {
+        if(card instanceof InvertDirectionUnoCard) return true;
         if("color" in card && card["color"] != this.color) return false;
         return true;
     }

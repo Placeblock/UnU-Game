@@ -1,8 +1,8 @@
 import { Player } from "../../../../player/Player";
 import { OutPacket } from "../OutPacket";
 
-export class OutCurrentPlayerPacket extends OutPacket {
-    protected readonly action: string = "currentPlayer";
+export class OutPlayerRoomLeaderboardPacket extends OutPacket {
+    protected readonly action: string = "roomPlayerLeaderboard";
     private readonly player: Player;
 
     constructor(player: Player) {
@@ -11,7 +11,7 @@ export class OutCurrentPlayerPacket extends OutPacket {
     }
 
     asJSON(): {} {
-        return {"action":this.action,"player":this.player.asJSON(),"timestamp":Date.now()};
+        return {"action":this.action,"player":this.player.asJSON()};
     }
 
     public getPlayer(): Player {

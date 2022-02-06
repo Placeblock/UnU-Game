@@ -1,4 +1,3 @@
-import { Player } from "../../../../player/Player";
 import { OutPacket } from "../OutPacket";
 
 export class OutForcedColorPacket extends OutPacket {

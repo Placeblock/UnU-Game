@@ -9,6 +9,19 @@
             *ngFor="let card of (inventorys.get(this.player.uuid)?.cards$| async); let index=index">
                 <app-unocard [side]="'back'" [unucard]="card"></app-unocard>
             </div>
+            <ng-container *ngIf="this.roundState.leaderboard$ | async as leaderboard">
+                <ng-container *ngIf="(inventorys.get(this.player.uuid)?.cards$| async)?.length == 0">
+                    <p id="firstplace" *ngIf="leaderboard[0] != null && leaderboard[0].uuid == this.player.uuid">
+                        1. Place
+                    </p>
+                    <p id="secondplace" *ngIf="leaderboard[1] != null && leaderboard[1].uuid == this.player.uuid">
+                        2. Place
+                    </p>
+                    <p id="thirdplace" *ngIf="leaderboard[2] != null && leaderboard[2].uuid == this.player.uuid">
+                        3. Place
+                    </p>
+                </ng-container>
+            </ng-container>
         </ng-container>
 
     </ng-container>

@@ -15,6 +15,7 @@ export class OutStartRoundPacket extends OutPacket {
     }
 
     public asJSON(): {} {
-        return {"action":this.action,"round":this.round.asJSON()};
+        console.log(Date.now());
+        return {"action":this.action,"round":this.round.asJSON(),"timestamp":Date.now()};
     }
 }

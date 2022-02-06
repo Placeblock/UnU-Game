@@ -35,6 +35,9 @@ export class WebsocketService {
           this.roomState.settings = data["room"]["settings"];
           this.roomState.players = data["room"]["players"];
           this.roomState.isShowingSettings = false;
+          if("round" in data["room"]) {
+            this.applyRoundData(data["room"]["round"]);
+          }
           router.navigate([data["room"]["name"]]);
           break;
         case "playerLeftRoom":
@@ -59,37 +62,18 @@ export class WebsocketService {
           this.roundState.setInventory(data["player"], newInventory);
           break;
         case "startRound":
-          const unuCard = this.getCardFromJson(data["round"]["currentcard"]);
-          if(unuCard == null) return;
-          this.roundState.currentcard = unuCard;
-          this.roundState.currentplayer = data["round"]["currentplayer"];
-          this.roundState.forcedcolor = null;
-          for(const jsoninventory of data["round"]["inventorys"]) {
-            if(jsoninventory["player"].uuid == this.roomState.me?.uuid) continue;
-            const inventory = new Inventory();
-            for(var i = 0; i < jsoninventory["cards"].length; i++) {
-              inventory.addCard(new NumberUnUCard(jsoninventory["cards"][i], 0, Color.RED));
-            }
-            this.roundState.setInventory(jsoninventory["player"], inventory);
-            this.roundState.addPlayer(jsoninventory["player"]);
-          }
-          this.roomState.roundRunning = true;
+          this.applyRoundData(data["round"]);
+          this.roundState.nextTimer = data["timestamp"];
           break;
         case "currentPlayer":
           this.roundState.currentplayer = data["player"];
+          this.roundState.nextTimer = data["timestamp"];
           break;
         case "playCard":
           const unuCard2 = this.getCardFromJson(data["unocard"]);
           if(unuCard2 == null) return;
           this.roundState.getInventory(data["player"])?.removeCard(unuCard2);
           this.roundState.currentcard = unuCard2;
-          if(unuCard2 instanceof Draw2UnUCard) {
-            this.roundState.drawqueue = this.roundState.drawqueue + 2;
-          }else if(unuCard2 instanceof Draw4UnUCard) {
-            this.roundState.drawqueue = this.roundState.drawqueue + 4;
-          }else {
-            this.roundState.drawqueue = 0;
-          }
           break;
         case "playerDrawHiddenCard":
           this.roundState.getInventory(data["player"])?.addCard(new NumberUnUCard(data["uuid"], 0, Color.RED));
@@ -109,10 +93,36 @@ export class WebsocketService {
             this.roundState.currentcard.setChosenColor(Color.fromString(data["color"]));
           }
           break;
+        case "drawQueue":
+          this.roundState.drawqueue = data["amount"];
+          break;
+        case "finishRound":
+          this.roomState.roundRunning = false;
+          break;
         default:
           break;
       }
     });
+  }
+
+  applyRoundData(data: any) {
+    const unuCard = this.getCardFromJson(data["currentcard"]);
+    if(unuCard != null)  {
+      this.roundState.currentcard = unuCard;
+    }
+    this.roundState.currentplayer = data["currentplayer"];
+    this.roundState.forcedcolor = null;
+    this.roundState.leaderboard = [];
+    for(const jsoninventory of data["inventorys"]) {
+      if(jsoninventory["player"].uuid == this.roomState.me?.uuid) continue;
+      const inventory = new Inventory();
+      for(var i = 0; i < jsoninventory["cards"].length; i++) {
+        inventory.addCard(new NumberUnUCard(jsoninventory["cards"][i], 0, Color.RED));
+      }
+      this.roundState.setInventory(jsoninventory["player"], inventory);
+      this.roundState.addPlayer(jsoninventory["player"]);
+    }
+    this.roomState.roundRunning = true;
   }
 
   getCardFromJson(json: JSONUnUCard): UnUCard | null {

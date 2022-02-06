@@ -30,8 +30,10 @@ var DrawTwoUnoCard = /** @class */ (function (_super) {
         return new DrawTwoUnoCard(UnoCard_1.UnoCard.randomColor());
     };
     DrawTwoUnoCard.prototype.isValidNextCard = function (round, card) {
-        if (card instanceof DrawFourUnoCard_1.DrawFourUnoCard && !round.getSettings().allowdraw2ondraw4)
+        if (card instanceof DrawFourUnoCard_1.DrawFourUnoCard && !round.getSettings().allowdraw4ondraw2)
             return false;
+        if (card instanceof DrawTwoUnoCard)
+            return true;
         if ("color" in card && card["color"] != this.color)
             return false;
         return true;

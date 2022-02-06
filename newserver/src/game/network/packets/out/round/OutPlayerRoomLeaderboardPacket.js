@@ -15,23 +15,22 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-exports.OutStartRoundPacket = void 0;
+exports.OutPlayerRoomLeaderboardPacket = void 0;
 var OutPacket_1 = require("../OutPacket");
-var OutStartRoundPacket = /** @class */ (function (_super) {
-    __extends(OutStartRoundPacket, _super);
-    function OutStartRoundPacket(round) {
+var OutPlayerRoomLeaderboardPacket = /** @class */ (function (_super) {
+    __extends(OutPlayerRoomLeaderboardPacket, _super);
+    function OutPlayerRoomLeaderboardPacket(player) {
         var _this = _super.call(this) || this;
-        _this.action = "startRound";
-        _this.round = round;
+        _this.action = "roomPlayerLeaderboard";
+        _this.player = player;
         return _this;
     }
-    OutStartRoundPacket.prototype.getRound = function () {
-        return this.round;
+    OutPlayerRoomLeaderboardPacket.prototype.asJSON = function () {
+        return { "action": this.action, "player": this.player.asJSON() };
     };
-    OutStartRoundPacket.prototype.asJSON = function () {
-        console.log(Date.now());
-        return { "action": this.action, "round": this.round.asJSON(), "timestamp": Date.now() };
+    OutPlayerRoomLeaderboardPacket.prototype.getPlayer = function () {
+        return this.player;
     };
-    return OutStartRoundPacket;
+    return OutPlayerRoomLeaderboardPacket;
 }(OutPacket_1.OutPacket));
-exports.OutStartRoundPacket = OutStartRoundPacket;
+exports.OutPlayerRoomLeaderboardPacket = OutPlayerRoomLeaderboardPacket;

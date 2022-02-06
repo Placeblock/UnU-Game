@@ -1,7 +1,7 @@
 
 <ng-container *ngIf="this.roomState.me$ | async as me">
     <ng-container *ngIf="this.roundState.inventorys$ | async as inventorys">
-        <ng-container *ngIf="inventorys.get(me.uuid)?.cards$ | async as cards">`
+        <ng-container *ngIf="inventorys.get(me.uuid)?.cards$ | async as cards">
             <div class="card-container"
                 *ngFor="let card of cards let index=index"
                 #element

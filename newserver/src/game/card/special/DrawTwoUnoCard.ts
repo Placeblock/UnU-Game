@@ -17,7 +17,8 @@ export class DrawTwoUnoCard extends SpecialUnoCard implements Colorable {
     }
 
     isValidNextCard(round: Round, card: UnoCard) {
-        if(card instanceof DrawFourUnoCard && !round.getSettings().allowdraw2ondraw4) return false;
+        if(card instanceof DrawFourUnoCard && !round.getSettings().allowdraw4ondraw2) return false;
+        if(card instanceof DrawTwoUnoCard) return true;
         if("color" in card && card["color"] != this.color) return false;
         return true;
     }

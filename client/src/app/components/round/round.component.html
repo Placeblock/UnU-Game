@@ -1,5 +1,4 @@
 <app-user-infos></app-user-infos>
-<div>{{roundState.drawqueue}}</div>
 <div id="center-container">
     <div id="cardstack">
         <div tooltip="Draw Card" placement="top" [showDelay]="100" 
@@ -10,8 +9,13 @@
             <app-unocard [unucard]="this.stackCard" [side]="'back'"></app-unocard>
         </div>
     </div>
-    <ng-container *ngIf="roundState.currentcard$ | async as resolved">
-        <app-unocard [unucard]="resolved"></app-unocard>
+    <ng-container *ngIf="roundState.currentcard$ | async as currentcard">
+        <div id="currentcard-container">
+            <app-unocard [unucard]="currentcard"></app-unocard>
+            <ng-container *ngIf="roundState.drawqueue$ | async as drawqueue">
+                <p id="drawqueue-container" *ngIf="drawqueue > 0">{{drawqueue}}</p>
+            </ng-container>
+        </div>
     </ng-container>
 </div>
 <app-inventory></app-inventory>
@@ -21,3 +25,4 @@
     <div id="green" (click)="forceColorSelect(Color.GREEN)">GRÜN</div>
     <div id="yellow" (click)="forceColorSelect(Color.YELLOW)">GELB</div>
 </div>
+<app-next-timer></app-next-timer>

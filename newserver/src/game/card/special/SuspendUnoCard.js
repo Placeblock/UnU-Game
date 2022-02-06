@@ -29,6 +29,8 @@ var SuspendUnUCard = /** @class */ (function (_super) {
         return new SuspendUnUCard(UnoCard_1.UnoCard.randomColor());
     };
     SuspendUnUCard.prototype.isValidNextCard = function (round, card) {
+        if (card instanceof SuspendUnUCard)
+            return true;
         if ("color" in card && card["color"] != this.color)
             return false;
         return true;

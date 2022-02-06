@@ -33,6 +33,32 @@ export class RoundState {
     private _drawqueue = new BehaviorSubject<number>(0);
     drawqueue$ = this._drawqueue.asObservable();
 
+    private _nextTimer = new BehaviorSubject<number>(0);
+    nextTimer$ = this._nextTimer.asObservable();
+
+    private _leaderboard = new BehaviorSubject<Player[]>([]);
+    leaderboard$ = this._leaderboard.asObservable();
+
+    get leaderboard(): Player[] {
+        return this._leaderboard.getValue();
+    }
+
+    set leaderboard(players: Player[]) {
+        this._leaderboard.next(players);
+    }
+
+    addLeaderboard(player: Player) {
+        this.leaderboard = [...this.leaderboard, player];
+    }
+    
+    get nextTimer(): number {
+        return this._nextTimer.getValue();
+    }
+
+    set nextTimer(timestamp: number) {
+        this._nextTimer.next(timestamp);
+    }
+
     get drawqueue(): number {
         return this._drawqueue.getValue();
     }

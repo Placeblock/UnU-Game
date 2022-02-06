@@ -26,6 +26,9 @@ import { OutWishCardPacket } from "./network/packets/out/round/OutWishCardPacket
 import { InSayUNOPacket } from "./network/packets/in/round/InSayUNOPacket";
 import { OutPlayerSayUNUPacket } from "./network/packets/out/round/OutPlayerSayUNUPacket";
 import { InEndTurnPacket } from "./network/packets/in/round/InEndTurnPacket";
+import { OutRoundFinishedPacket } from "./network/packets/out/round/OutRoundFinishedPacket";
+import { OutPlayerRoomLeaderboardPacket } from "./network/packets/out/round/OutPlayerRoomLeaderboardPacket";
+import { OutDrawQueuePacket } from "./network/packets/out/round/OutDrawQueuePacket";
 
 export class Round {
     private readonly room: Room;
@@ -40,11 +43,12 @@ export class Round {
     private settings: RoundSettings;
     private direction: boolean = true;
     private currentdrawamount: number = 0;
-    private sayUnoTimer: Map<string, NodeJS.Timeout> = new Map;
+    private sayUnoTimer: Map<string, NodeJS.Timeout[]> = new Map;
+    private nextTimer: NodeJS.Timeout;
 
     constructor(players: Player[], settings: RoundSettings, room: Room) {
         this.room = room;
-        this.players = players;
+        this.players = [...players];
         this.currentplayer = players[Math.floor(Math.random()*players.length)];
         this.settings = settings;
         for (var player of this.players) {
@@ -54,13 +58,18 @@ export class Round {
                 var card: UnoCard = randomCard();
                 cardjsonlist.push(card.asJson());
                 this.inventorys.get(player).addCard(card);
-                this.currentcard = card;
             }
-            this.inventorys.get(player).addCard(new WishUnoCard());
-            this.inventorys.get(player).addCard(new WishUnoCard());
-            this.inventorys.get(player).addCard(new WishUnoCard());
             player.send(new OutInventoryDataPacket(player, this.inventorys.get(player)));
         }
+        this.currentcard = new NumberUnoCard(UnoCard.randomColor(), Math.floor(Math.random()*9));
+        this.nextTimer = setTimeout(() => {
+            if(!this.currentplayerdrawedcard && !this.currentplayerplayedcard) {
+                console.log(this);
+                this.applyDrawQueue();
+                this.drawCard(this.currentplayer, 1);
+            }
+            this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
+        }, 30000);
     }
 
     getPlayers(): Player[] {
@@ -68,6 +77,7 @@ export class Round {
     }
 
     getPlayersWithCards(): Player[] {
+        this.players.forEach((value) => {console.log(value.getUUID())});
         return this.players.filter((element) => {
             return this.inventorys.get(element).getCards().length > 0;
         })
@@ -94,17 +104,36 @@ export class Round {
         return this.forcedcolor;
     }
 
+    endRound() {
+        console.log("game finished");
+        this.room.sendToAllPlayers(new OutRoundFinishedPacket(), []);
+        this.sayUnoTimer.forEach((value) => {
+            for(var timer of value) {
+                clearTimeout(timer);
+            }
+        });
+        clearTimeout(this.nextTimer);
+        this.room.deleteRound();
+    }
+
     playCard(unoCard: UnoCard) {
         this.currentcard = unoCard;
         this.getPlayerInventory(this.currentplayer).removeCard(unoCard);
         this.room.sendToAllPlayers(new OutPlayerPlayCardPacket(this.currentplayer, unoCard), []);
         this.currentplayerplayedcard = true;
+        if(this.inventorys.get(this.currentplayer).getCards().length == 0) {
+            this.addLeaderboardPlayer(this.currentplayer);
+            this.room.sendToAllPlayers(new OutPlayerRoomLeaderboardPacket(this.currentplayer), []);
+        }
         if(this.isFinished()) {
-            //TODO END ROUND (Add to Leaderboard)
+            this.endRound();
         }
         if(this.inventorys.get(this.currentplayer).getCards().length == 1) {
-            this.sayUnoTimer.set(this.currentplayer.getUUID(), setTimeout((player) => {
-                console.log("drawtimer");
+            if(!this.sayUnoTimer.has(this.currentplayer.getUUID())) {
+                this.sayUnoTimer.set(this.currentplayer.getUUID(), []);
+            }
+            this.sayUnoTimer.get(this.currentplayer.getUUID()).push(setTimeout((player) => {
+                console.log("drawcard2");
                 this.drawCard(player, 2);
             }, 10000, this.currentplayer));
         }
@@ -118,7 +147,7 @@ export class Round {
             this.currentdrawamount = 0;
             this.direction = !this.direction;
             this.setForcedColor(undefined);
-            this.nextPlayer(nextPlayer);
+            this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
         }else if(unoCard instanceof SuspendUnUCard) {
             this.applyDrawQueue()
             this.currentdrawamount = 0;
@@ -127,10 +156,12 @@ export class Round {
             this.nextPlayer(nextPlayer);
         }else if(unoCard instanceof DrawTwoUnoCard) {
             this.currentdrawamount += 2;
+            this.room.sendToAllPlayers(new OutDrawQueuePacket(this.currentdrawamount), []);
             this.setForcedColor(undefined);
             this.nextPlayer(nextPlayer);
         }else if(unoCard instanceof DrawFourUnoCard) {
             this.currentdrawamount += 4;
+            this.room.sendToAllPlayers(new OutDrawQueuePacket(this.currentdrawamount), []);
             this.currentplayer.send(new OutWishCardPacket());
         }else if(unoCard instanceof WishUnoCard) {
             this.currentplayer.send(new OutWishCardPacket());
@@ -157,25 +188,25 @@ export class Round {
     }
 
     removePlayer(player: Player) {
-        this.inventorys.delete(player);
-        this.players.splice(this.players.indexOf(player), 1);
-        if(this.isFinished()) {
-            //TODO: Remove From Leaderboard
-            //TODO: End Round
-            return;
-        }
+        console.log("remove player round");
         if(this.currentplayer == player) {
             const nextPlayer = this.getNextPlayer(this.currentplayer, true);
             if(nextPlayer == null) return;
             this.nextPlayer(nextPlayer);
         }
+        this.players.splice(this.players.indexOf(player), 1);
+        this.inventorys.delete(player);
         this.room.sendToAllPlayers(new OutPlayerLeftRoundPacket(player), []);
+        if(this.isFinished()) {
+            this.endRound();
+        }
     }
 
     nextPlayer(player: Player) {
         this.currentplayerplayedcard = false;
         this.currentplayerdrawedcard = false;
         this.currentplayer = player;
+        this.nextTimer.refresh();
         this.room.sendToAllPlayers(new OutCurrentPlayerPacket(player), []);
         for(var unoCard of this.getValidNextCards()) {
             if(unoCard instanceof DrawFourUnoCard || unoCard instanceof DrawTwoUnoCard) {
@@ -183,12 +214,12 @@ export class Round {
             }
         }
         this.applyDrawQueue();
-        console.log("drawqueue");
     }
 
     applyDrawQueue() {
         this.drawCard(this.currentplayer, this.currentdrawamount);
         this.currentdrawamount = 0;
+        this.room.sendToAllPlayers(new OutDrawQueuePacket(this.currentdrawamount), []);
     }
 
     isFinished(): Player | null {
@@ -203,6 +234,7 @@ export class Round {
         var players = this.players;
         if(hasCards) {
             players = this.getPlayersWithCards();
+            if(players.length == 0) return undefined;
         }
         if(this.direction) {
             if(players.indexOf(player) == players.length-1) {
@@ -269,8 +301,9 @@ export class Round {
         if(player != this.currentplayer) return;
         if(this.currentplayerplayedcard) return;
         if(this.currentplayerdrawedcard) return;
-        this.drawCard(player);
         console.log("drawcard");
+        this.applyDrawQueue();
+        this.drawCard(player);
         this.currentplayerdrawedcard = true;
         if(this.getValidNextCards().length > 0) return;
         this.nextPlayer(this.getNextPlayer(this.currentplayer, true));
@@ -278,7 +311,11 @@ export class Round {
 
     receiveSayUno(packet: InSayUNOPacket) {
         const player = packet.getPlayer();
-        clearTimeout(this.sayUnoTimer.get(player.getUUID()));
+        if(this.sayUnoTimer.get(player.getUUID()).length > 0) {
+            var timer = this.sayUnoTimer.get(player.getUUID())[0];
+            clearTimeout(timer);
+            this.sayUnoTimer.get(player.getUUID()).splice(0, 1);
+        }
         this.room.sendToAllPlayers(new OutPlayerSayUNUPacket(player), []);
     }
 

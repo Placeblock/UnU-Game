@@ -16,6 +16,7 @@ export class SuspendUnUCard extends SpecialUnoCard implements Colorable{
     }
 
     isValidNextCard(round: Round, card: UnoCard) {
+        if(card instanceof SuspendUnUCard) return true;
         if("color" in card && card["color"] != this.color) return false;
         return true;
     }
