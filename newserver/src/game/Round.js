@@ -137,7 +137,10 @@ var Round = /** @class */ (function () {
             this.currentdrawamount = 0;
             this.direction = !this.direction;
             this.setForcedColor(undefined);
-            this.nextPlayer(this.getNextPlayer(this.currentplayer));
+            if (this.getPlayersWithCards().length == 2) {
+                nextPlayer = this.getNextPlayer(nextPlayer);
+            }
+            this.nextPlayer(nextPlayer);
         }
         else if (unoCard instanceof SuspendUnoCard_1.SuspendUnUCard) {
             this.applyDrawQueue();
@@ -182,6 +185,9 @@ var Round = /** @class */ (function () {
     };
     Round.prototype.removePlayer = function (player) {
         if (this.currentplayer == player) {
+            if ((this.currentcard instanceof WishUnoCard_1.WishUnoCard || this.currentcard instanceof DrawFourUnoCard_1.DrawFourUnoCard) && this.currentplayerplayedcard) {
+                this.setForcedColor(UnoCard_1.UnoCard.randomColor());
+            }
             var nextPlayer = this.getNextPlayer(this.currentplayer);
             if (nextPlayer == null)
                 return;

@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { Player } from "../models/player";
 import { RoundSettings } from "../models/roundsettings";
-import { RoundState } from "./round-state.service";
 
 @Injectable({
     providedIn: 'root'

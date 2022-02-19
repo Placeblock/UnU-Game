@@ -89,6 +89,8 @@ export class RoundState {
 
     removePlayer(player: Player) {
         this.players = this.players.filter(value => value.uuid != player.uuid);
+        this.inventorys.delete(player.uuid);
+        this.inventorys = this.inventorys;
     }
 
     get currentplayer(): Player | null {
@@ -113,6 +115,10 @@ export class RoundState {
 
     setInventory(player: Player, inventory: Inventory) {
         this.inventorys = this.inventorys.set(player.uuid, inventory);
+    }
+
+    deleteInventory(player: Player) {
+        this.inventorys.delete(player.uuid);
     }
 
     get currentcard(): UnUCard {

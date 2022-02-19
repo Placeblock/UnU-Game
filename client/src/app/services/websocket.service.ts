@@ -42,6 +42,7 @@ export class WebsocketService {
           break;
         case "playerLeftRoom":
           this.roomState.removePlayer(data["player"]);
+          this.roundState.removePlayer(data["player"]);
           break;
         case "playerJoinedRoom":
           this.roomState.addPlayer(data["player"]);
@@ -113,6 +114,7 @@ export class WebsocketService {
       this.roundState.currentcard = unuCard;
     }
     this.roundState.currentplayer = data["currentplayer"];
+    this.roundState.drawqueue = 0;
     this.roundState.forcedcolor = null;
     this.roundState.leaderboard = [];
     for(const jsoninventory of data["inventorys"]) {

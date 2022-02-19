@@ -144,10 +144,7 @@ export class Round {
             this.currentdrawamount = 0;
             this.direction = !this.direction;
             this.setForcedColor(undefined);
-            if(this.getPlayersWithCards().length == 2) {
-	            nextPlayer = this.getNextPlayer(nextPlayer);
-	        }
-            this.nextPlayer(nextPlayer);
+            this.nextPlayer(this.getNextPlayer(this.currentplayer));
         }else if(unoCard instanceof SuspendUnUCard) {
             this.applyDrawQueue()
             this.currentdrawamount = 0;
@@ -202,9 +199,6 @@ export class Round {
     }
 
     nextPlayer(player: Player) {
-        if((this.currentcard instanceof WishUnoCard || this.currentcard instanceof DrawFourUnoCard) && this.currentplayerplayedcard && this.forcedcolor == undefined) {
-            this.setForcedColor(UnoCard.randomColor());
-        }
         this.currentplayerplayedcard = false;
         this.currentplayerdrawedcard = false;
         this.currentplayer = player;
